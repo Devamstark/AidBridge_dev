@@ -78,6 +78,7 @@ export default function Survivors() {
             <SelectTrigger className="w-full sm:w-[160px] bg-slate-800 border-slate-700 text-white"><SelectValue placeholder="Status" /></SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Statuses</SelectItem>
+              <SelectItem value="PENDING_REVIEW">🔍 Pending Review</SelectItem>
               <SelectItem value="REGISTERED">Registered</SelectItem>
               <SelectItem value="SAFE">Sheltered</SelectItem>
               <SelectItem value="INJURED">Assisted</SelectItem>

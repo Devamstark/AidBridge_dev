@@ -67,8 +67,28 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             const dateStr = new Date().toISOString().slice(0, 10).replace(/-/g, '')
             const randomNum = Math.floor(1000 + Math.random() * 9000)
             const caseNumber = `SRV-${dateStr}-${randomNum}`
-            const registration = await (prisma as any).survivorRegistration.create({ data: { ...body, caseNumber, dateOfBirth: body.dateOfBirth ? new Date(body.dateOfBirth) : null } })
-            return res.status(201).json({ caseNumber: registration.caseNumber, status: 'PENDING', message: 'Registration submitted successfully. Save your Case Number to track status.', createdAt: registration.createdAt })
+
+            // Create in the main Survivor table so it shows on Dashboard
+            const registration = await prisma.survivor.create({
+                data: {
+                    firstName: body.firstName,
+                    lastName: body.lastName,
+                    phone: body.phone,
+                    email: body.email,
+                    caseNumber,
+                    dateOfBirth: body.dateOfBirth ? new Date(body.dateOfBirth) : null,
+                    familySize: body.householdSize,
+                    status: 'PENDING_REVIEW', // Special status for web registrations
+                    intakeNotes: `[WEB_PORTAL] Consent Info: Data=${body.consentDataSharing}, Contact=${body.consentContact}`
+                }
+            })
+
+            return res.status(201).json({
+                caseNumber: registration.caseNumber,
+                status: 'PENDING',
+                message: 'Registration submitted successfully. Save your Case Number to track status.',
+                createdAt: registration.createdAt
+            })
         }
 
         // Track Request
@@ -124,12 +144,30 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                 })
             }
 
-            // Try to find as Survivor Registration
-            const registration = await (prisma as any).survivorRegistration.findUnique({
+            // Try to find as Survivor Registration (Main Table)
+            const survivor = await prisma.survivor.findUnique({
                 where: { caseNumber: searchId }
             })
-            if (registration) {
-                return res.json({ type: 'SURVIVOR_REGISTRATION', caseNumber: registration.caseNumber, status: 'PENDING', firstName: registration.firstName, lastName: registration.lastName, createdAt: registration.createdAt, message: 'Your registration is being processed. A coordinator will contact you soon.' })
+            if (survivor) {
+                return res.json({
+                    type: 'SURVIVOR_REGISTRATION',
+                    caseNumber: survivor.caseNumber,
+                    status: survivor.status,
+                    firstName: survivor.firstName,
+                    lastName: survivor.lastName,
+                    createdAt: survivor.createdAt,
+                    message: survivor.status === 'PENDING_REVIEW'
+                        ? 'Your registration is being processed. A coordinator will contact you soon.'
+                        : `Your status is currently: ${survivor.status}`
+                })
+            }
+
+            // Fallback for legacy registration table
+            const legacyReg = await (prisma as any).survivorRegistration.findUnique({
+                where: { caseNumber: searchId }
+            })
+            if (legacyReg) {
+                return res.json({ type: 'SURVIVOR_REGISTRATION', caseNumber: legacyReg.caseNumber, status: 'PENDING', firstName: legacyReg.firstName, lastName: legacyReg.lastName, createdAt: legacyReg.createdAt, message: 'Your registration is being processed. A coordinator will contact you soon.' })
             }
             return res.status(404).json({ error: 'Request ID or Case Number not found' })
         }
