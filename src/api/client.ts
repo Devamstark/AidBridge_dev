@@ -224,10 +224,11 @@ class ApiClient {
   }
 
   private handleError(error: AxiosError): ApiError {
+    const data = error.response?.data as any
     return {
       status: error.response?.status,
-      message: (error.response?.data as any)?.message || 'An error occurred',
-      data: error.response?.data,
+      message: data?.error || data?.message || error.message || 'An error occurred',
+      data: data,
     }
   }
 

@@ -19,9 +19,9 @@ const helpRequestSchema = z.object({
 const registerSchema = z.object({
     firstName: z.string().min(1),
     lastName: z.string().min(1),
-    phone: z.string().min(10),
-    email: z.string().email().optional().or(z.literal('')),
-    dateOfBirth: z.string().optional(),
+    phone: z.string().min(1),
+    email: z.string().email().optional().or(z.literal('')).nullable(),
+    dateOfBirth: z.string().optional().nullable(),
     householdSize: z.number().min(1).default(1),
     consentDataSharing: z.boolean().default(false),
     consentContact: z.boolean().default(true),
@@ -30,7 +30,7 @@ const registerSchema = z.object({
 export default async function handler(req: VercelRequest, res: VercelResponse) {
     try {
         const url = req.url || ''
-        const id = req.query.id as string
+        const id = (req.query.id as string || '').replace(/\/$/, '')
 
         console.log('Public API Call:', { url, id, method: req.method })
 
