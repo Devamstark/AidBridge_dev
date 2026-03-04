@@ -32,17 +32,24 @@ export default function Disasters() {
   });
 
   const createMutation = useMutation({
-    mutationFn: (data) => apiClient.post(endpoints.disasters, data),
+    mutationFn: (newDisasterData) => apiClient.post(endpoints.disasters, newDisasterData),
     onMutate: async (newDisaster) => {
       await queryClient.cancelQueries({ queryKey: ["disasters"] });
       const previous = queryClient.getQueryData(["disasters"]);
-      queryClient.setQueryData(["disasters"], (old = []) => [{ ...newDisaster, id: "temp-" + Date.now(), createdAt: new Date().toISOString() }, ...old]);
+      queryClient.setQueryData(["disasters"], (old = []) => [
+        { ...newDisaster, id: "temp-" + Date.now(), createdAt: new Date().toISOString() },
+        ...(Array.isArray(old) ? old : [])
+      ]);
       return { previous };
     },
     onError: (err, newDisaster, context) => {
-      queryClient.setQueryData(["disasters"], context.previous);
+      if (context?.previous) queryClient.setQueryData(["disasters"], context.previous);
     },
-    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ["disasters"] }); setOpen(false); resetForm(); },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["disasters"] });
+      setOpen(false);
+      resetForm();
+    },
   });
 
   const endDisasterMutation = useMutation({
@@ -50,11 +57,13 @@ export default function Disasters() {
     onMutate: async ({ id }) => {
       await queryClient.cancelQueries({ queryKey: ["disasters"] });
       const previous = queryClient.getQueryData(["disasters"]);
-      queryClient.setQueryData(["disasters"], (old = []) => old.map(d => d.id === id ? { ...d, status: "RESOLVED" } : d));
+      queryClient.setQueryData(["disasters"], (old = []) =>
+        (Array.isArray(old) ? old : []).map(d => d.id === id ? { ...d, status: "RESOLVED" } : d)
+      );
       return { previous };
     },
     onError: (err, vars, context) => {
-      queryClient.setQueryData(["disasters"], context.previous);
+      if (context?.previous) queryClient.setQueryData(["disasters"], context.previous);
     },
     onSuccess: () => { queryClient.invalidateQueries({ queryKey: ["disasters"] }); },
   });
@@ -64,11 +73,13 @@ export default function Disasters() {
     onMutate: async ({ id }) => {
       await queryClient.cancelQueries({ queryKey: ["disasters"] });
       const previous = queryClient.getQueryData(["disasters"]);
-      queryClient.setQueryData(["disasters"], (old = []) => old.map(d => d.id === id ? { ...d, status: "ACTIVE" } : d));
+      queryClient.setQueryData(["disasters"], (old = []) =>
+        (Array.isArray(old) ? old : []).map(d => d.id === id ? { ...d, status: "ACTIVE" } : d)
+      );
       return { previous };
     },
     onError: (err, vars, context) => {
-      queryClient.setQueryData(["disasters"], context.previous);
+      if (context?.previous) queryClient.setQueryData(["disasters"], context.previous);
     },
     onSuccess: () => { queryClient.invalidateQueries({ queryKey: ["disasters"] }); },
   });
@@ -78,11 +89,13 @@ export default function Disasters() {
     onMutate: async ({ id }) => {
       await queryClient.cancelQueries({ queryKey: ["disasters"] });
       const previous = queryClient.getQueryData(["disasters"]);
-      queryClient.setQueryData(["disasters"], (old = []) => old.map(d => d.id === id ? { ...d, status: "MONITORING" } : d));
+      queryClient.setQueryData(["disasters"], (old = []) =>
+        (Array.isArray(old) ? old : []).map(d => d.id === id ? { ...d, status: "MONITORING" } : d)
+      );
       return { previous };
     },
     onError: (err, vars, context) => {
-      queryClient.setQueryData(["disasters"], context.previous);
+      if (context?.previous) queryClient.setQueryData(["disasters"], context.previous);
     },
     onSuccess: () => { queryClient.invalidateQueries({ queryKey: ["disasters"] }); },
   });
