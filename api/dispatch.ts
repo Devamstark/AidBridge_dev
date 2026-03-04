@@ -76,12 +76,40 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             const where: any = {}
             if (status) where.status = status
             if (priority) where.priority = priority
+
             if (type === 'public') {
                 const requests = await (prisma as any).publicHelpRequest.findMany({ where, orderBy: { createdAt: 'desc' }, include: { disaster: { select: { name: true } } } })
                 return res.json(requests)
             }
-            const requests = await prisma.emergencyRequest.findMany({ where, orderBy: { createdAt: 'desc' }, include: { disaster: { select: { name: true } }, assignedVolunteers: { include: { user: { select: { fullName: true, phone: true } } } } } })
-            return res.json(requests)
+
+            if (type === 'internal') {
+                const requests = await prisma.emergencyRequest.findMany({ where, orderBy: { createdAt: 'desc' }, include: { disaster: { select: { name: true } }, assignedVolunteers: { include: { user: { select: { fullName: true, phone: true } } } } } })
+                return res.json(requests)
+            }
+
+            // By default, return both combined
+            const [internal, publicReqs] = await Promise.all([
+                prisma.emergencyRequest.findMany({ where, orderBy: { createdAt: 'desc' }, include: { disaster: { select: { name: true } }, assignedVolunteers: { include: { user: { select: { fullName: true, phone: true } } } } } }),
+                (prisma as any).publicHelpRequest.findMany({ where, orderBy: { createdAt: 'desc' }, include: { disaster: { select: { name: true } } } })
+            ])
+
+            const normalizedPublic = publicReqs.map((r: any) => ({
+                ...r,
+                type: r.emergencyType,
+                address: r.location,
+                isPublic: true
+            }))
+
+            const internalWithFlag = internal.map((r: any) => ({
+                ...r,
+                isPublic: false
+            }))
+
+            const all = [...normalizedPublic, ...internalWithFlag].sort((a: any, b: any) =>
+                new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+            )
+
+            return res.json(all)
         }
 
         return res.status(404).json({ error: 'Not found' })

@@ -84,16 +84,27 @@ export default function EmergencyDispatch() {
             </Card>
           ) : (
             requests.map(r => (
-              <Card 
-                key={r.id} 
+              <Card
+                key={r.id}
                 className={`p-4 cursor-pointer hover:bg-slate-700/50 border ${r.priority === "P0" ? "border-red-500 bg-red-950/20" : "border-slate-700 bg-slate-800"}`}
                 onClick={() => setSelectedRequest(r)}
               >
                 <div className="flex items-start justify-between">
                   <div>
-                    <p className="font-medium text-white text-sm">{r.type}</p>
-                    <p className="text-xs text-slate-400 mt-1">{r.description?.slice(0, 80) || "No description"}</p>
-                    <p className="text-xs text-slate-500 mt-2">{r.createdAt ? format(new Date(r.createdAt), "MMM d, h:mm a") : ""}</p>
+                    <div className="flex items-center gap-2">
+                      <p className="font-medium text-white text-sm">{r.type}</p>
+                      {r.isPublic && (
+                        <Badge variant="outline" className="text-[10px] h-4 border-blue-500 text-blue-400 bg-blue-500/10">Portal</Badge>
+                      )}
+                    </div>
+                    <p className="text-xs text-slate-400 mt-1">
+                      {r.isPublic && <span className="text-blue-300 mr-1">{r.fullName || "Public"}:</span>}
+                      {r.description?.slice(0, 80) || "No description"}
+                    </p>
+                    <div className="flex items-center gap-3 mt-2">
+                      <p className="text-[10px] text-slate-500">{r.createdAt ? format(new Date(r.createdAt), "MMM d, h:mm a") : ""}</p>
+                      {r.isPublic && r.phone && <p className="text-[10px] text-blue-400 font-mono">{r.phone}</p>}
+                    </div>
                   </div>
                   <div className="flex flex-col items-end gap-1">
                     <Badge className={r.priority === "P0" ? "bg-red-600" : "bg-slate-600"}>{r.priority}</Badge>
