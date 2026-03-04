@@ -1,8 +1,60 @@
 {
   "routes": [
     {
-      "src": "/api/(.*)",
-      "dest": "/api/$1"
+      "src": "/api/auth/(.*)",
+      "dest": "/api/auth.ts"
+    },
+    {
+      "src": "/api/disasters/(.*)",
+      "dest": "/api/disasters.ts?id=$1"
+    },
+    {
+      "src": "/api/disasters",
+      "dest": "/api/disasters.ts"
+    },
+    {
+      "src": "/api/survivors/(.*)",
+      "dest": "/api/survivors.ts?id=$1"
+    },
+    {
+      "src": "/api/survivors",
+      "dest": "/api/survivors.ts"
+    },
+    {
+      "src": "/api/volunteers/(.*)",
+      "dest": "/api/volunteers.ts?id=$1"
+    },
+    {
+      "src": "/api/volunteers",
+      "dest": "/api/volunteers.ts"
+    },
+    {
+      "src": "/api/dispatch/(.*)",
+      "dest": "/api/dispatch.ts?id=$1"
+    },
+    {
+      "src": "/api/public/(.*)",
+      "dest": "/api/public.ts?id=$1"
+    },
+    {
+      "src": "/api/locations",
+      "dest": "/api/core.ts"
+    },
+    {
+      "src": "/api/resources",
+      "dest": "/api/core.ts"
+    },
+    {
+      "src": "/api/distributions",
+      "dest": "/api/core.ts"
+    },
+    {
+      "src": "/api/break-glass",
+      "dest": "/api/core.ts"
+    },
+    {
+      "src": "/api/alerts/(.*)",
+      "dest": "/api/core.ts"
     },
     {
       "src": "/assets/(.*)",
