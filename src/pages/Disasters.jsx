@@ -13,6 +13,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Card, CardContent } from "@/components/ui/card";
 import { Activity, Plus, Search } from "lucide-react";
@@ -22,6 +23,8 @@ const DISASTER_TYPES = ["tornado", "hurricane", "flood", "earthquake", "conflict
 
 export default function Disasters() {
   const [open, setOpen] = useState(false);
+  const [editingId, setEditingId] = useState(null);
+  const [deleteId, setDeleteId] = useState(null);
   const [search, setSearch] = useState("");
   const [form, setForm] = useState({
     name: "",
@@ -59,6 +62,24 @@ export default function Disasters() {
       queryClient.invalidateQueries({ queryKey: ["disasters"] });
       setOpen(false);
       resetForm();
+    },
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: ({ id, data }) => apiClient.put(endpoints.disaster(id), data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["disasters"] });
+      setOpen(false);
+      setEditingId(null);
+      resetForm();
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: (id) => apiClient.delete(endpoints.disaster(id)),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["disasters"] });
+      setDeleteId(null);
     },
   });
 
@@ -170,17 +191,33 @@ export default function Disasters() {
                 onActivate={(id) => activateDisasterMutation.mutate({ id })}
                 onMonitor={(id) => monitorDisasterMutation.mutate({ id })}
                 onEnd={(id) => endDisasterMutation.mutate({ id })}
+                onEdit={(disaster) => {
+                  setEditingId(disaster.id);
+                  setForm({
+                    name: disaster.name || "",
+                    disasterType: disaster.disasterType || "hurricane",
+                    severity: disaster.severity || 3,
+                    status: disaster.status || "ACTIVE",
+                    affectedArea: disaster.affectedArea || "",
+                    description: disaster.description || "",
+                    estimatedAffected: disaster.estimatedAffected || 0,
+                    latitude: disaster.latitude || 0,
+                    longitude: disaster.longitude || 0,
+                  });
+                  setOpen(true);
+                }}
+                onDelete={(id) => setDeleteId(id)}
               />
             ))}
           </div>
         )}
 
-        <Dialog open={open} onOpenChange={setOpen}>
-          <DialogContent className="max-w-lg bg-card border text-foreground">
+        <Dialog open={open} onOpenChange={(v) => { setOpen(v); if (!v) { setEditingId(null); resetForm(); } }}>
+          <DialogContent className="max-w-lg bg-card border">
             <DialogHeader>
-              <DialogTitle className="text-foreground">New Disaster Event</DialogTitle>
+              <DialogTitle>{editingId ? "Edit Disaster Event" : "New Disaster Event"}</DialogTitle>
               <DialogDescription className="text-muted-foreground">
-                Enter the details of the new disaster event to begin tracking and response efforts.
+                {editingId ? "Update the details for this disaster event." : "Enter the details of the new disaster event to begin tracking and response efforts."}
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-4 mt-2">
@@ -231,18 +268,48 @@ export default function Disasters() {
                 <Textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={3} />
               </div>
               <div className="flex justify-end gap-2 pt-2">
-                <Button variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
+                <Button variant="outline" onClick={() => { setOpen(false); setEditingId(null); resetForm(); }}>Cancel</Button>
                 <Button
-                  className="bg-blue-600 hover:bg-blue-700"
-                  onClick={() => createMutation.mutate(form)}
-                  disabled={!form.name || createMutation.isPending}
+                  className="bg-primary hover:bg-primary/90"
+                  onClick={() => {
+                    if (editingId) {
+                      updateMutation.mutate({ id: editingId, data: form });
+                    } else {
+                      createMutation.mutate(form);
+                    }
+                  }}
+                  disabled={!form.name || createMutation.isPending || updateMutation.isPending}
                 >
-                  {createMutation.isPending ? "Creating..." : "Create Event"}
+                  {editingId
+                    ? (updateMutation.isPending ? "Saving..." : "Save Changes")
+                    : (createMutation.isPending ? "Creating..." : "Create Event")
+                  }
                 </Button>
               </div>
             </div>
           </DialogContent>
         </Dialog>
+
+        {/* Delete Confirmation */}
+        <AlertDialog open={!!deleteId} onOpenChange={(v) => !v && setDeleteId(null)}>
+          <AlertDialogContent className="bg-card border">
+            <AlertDialogHeader>
+              <AlertDialogTitle>Delete Disaster Event?</AlertDialogTitle>
+              <AlertDialogDescription>
+                This action cannot be undone. All associated data including survivor records linked to this event may be affected.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction
+                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                onClick={() => deleteMutation.mutate(deleteId)}
+              >
+                {deleteMutation.isPending ? "Deleting..." : "Delete"}
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
     </PullToRefresh>
   );

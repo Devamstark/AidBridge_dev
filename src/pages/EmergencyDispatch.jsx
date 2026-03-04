@@ -4,7 +4,7 @@ import { apiClient } from "@/api/client";
 import { endpoints } from "@/api/endpoints";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Plus, RefreshCw, Users, AlertTriangle, CheckCircle2, Activity, Zap } from "lucide-react";
+import { Plus, RefreshCw, Users, AlertTriangle, CheckCircle2, Activity, Zap, XCircle, Ban } from "lucide-react";
 import PageHeader from "@/components/ui/PageHeader";
 import { useTranslation } from "@/components/i18n/I18nContext";
 import { Card, CardContent } from "@/components/ui/card";
@@ -41,6 +41,19 @@ export default function EmergencyDispatch() {
     },
     onError: (err) => {
       toast.error(err.message || "Failed to assign volunteer");
+    }
+  });
+
+  const statusMutation = useMutation({
+    mutationFn: (params) => apiClient.post(`/dispatch/status`, params),
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["emergency-requests"] });
+      queryClient.invalidateQueries({ queryKey: ["volunteers"] });
+      toast.success(`Request marked as ${data.status}`);
+      setSelectedRequest(null);
+    },
+    onError: (err) => {
+      toast.error(err.message || "Failed to update status");
     }
   });
 
@@ -191,11 +204,66 @@ export default function EmergencyDispatch() {
                 <Button
                   onClick={handleAssign}
                   disabled={!selectedVolunteerId || assignMutation.isPending}
-                  className="w-full bg-blue-600 hover:bg-blue-700 mt-3"
+                  className="w-full bg-primary hover:bg-primary/90 mt-3"
                 >
                   {assignMutation.isPending ? "Assigning..." : "Confirm Assignment"}
                 </Button>
               </div>
+
+              {/* Status Actions */}
+              {["PENDING", "IN_PROGRESS", "ASSIGNED"].includes(selectedRequest.status) && (
+                <div className="pt-4 border-t">
+                  <p className="text-xs text-muted-foreground mb-2">Update Status</p>
+                  <div className="flex gap-2">
+                    <Button
+                      onClick={() => statusMutation.mutate({
+                        requestId: selectedRequest.requestId || selectedRequest.id,
+                        status: "RESOLVED"
+                      })}
+                      disabled={statusMutation.isPending}
+                      size="sm"
+                      className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white"
+                    >
+                      <CheckCircle2 className="w-3.5 h-3.5 mr-1" />
+                      {statusMutation.isPending ? "..." : "Mark Resolved"}
+                    </Button>
+                    <Button
+                      onClick={() => statusMutation.mutate({
+                        requestId: selectedRequest.requestId || selectedRequest.id,
+                        status: "CANCELLED"
+                      })}
+                      disabled={statusMutation.isPending}
+                      variant="outline"
+                      size="sm"
+                      className="flex-1 text-destructive border-destructive/30 hover:bg-destructive/5"
+                    >
+                      <Ban className="w-3.5 h-3.5 mr-1" />
+                      Cancel Request
+                    </Button>
+                  </div>
+                </div>
+              )}
+
+              {selectedRequest.status === "RESOLVED" && (
+                <div className="pt-4 border-t">
+                  <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400">
+                    <CheckCircle2 className="w-4 h-4" />
+                    <p className="text-sm font-medium">This request has been resolved</p>
+                  </div>
+                  {selectedRequest.resolvedAt && (
+                    <p className="text-xs text-muted-foreground mt-1">Resolved: {format(new Date(selectedRequest.resolvedAt), "MMM d, h:mm a")}</p>
+                  )}
+                </div>
+              )}
+
+              {selectedRequest.status === "CANCELLED" && (
+                <div className="pt-4 border-t">
+                  <div className="flex items-center gap-2 text-destructive">
+                    <XCircle className="w-4 h-4" />
+                    <p className="text-sm font-medium">This request was cancelled</p>
+                  </div>
+                </div>
+              )}
             </div>
           ) : (
             <div className="text-muted-foreground text-sm text-center py-8">Select a request from the list to view details and assign volunteers</div>

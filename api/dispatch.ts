@@ -208,6 +208,82 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             return res.json(all)
         }
 
+        // status update functionality
+        if (url.includes('/status')) {
+            if (req.method !== 'PUT' && req.method !== 'POST') return methodNotAllowed(res, ['PUT', 'POST'])
+            const { requestId, status: newStatus } = req.body
+            if (!requestId || !newStatus) return res.status(400).json({ error: 'requestId and status are required' })
+
+            // Check if it's a public request
+            if (requestId.startsWith('REQ-')) {
+                const publicReq = await (prisma as any).publicHelpRequest.findUnique({
+                    where: { requestId }
+                })
+                if (!publicReq) return res.status(404).json({ error: 'Request not found' })
+
+                await (prisma as any).publicHelpRequest.update({
+                    where: { requestId },
+                    data: {
+                        status: newStatus,
+                        ...(newStatus === 'RESOLVED' ? { resolvedAt: new Date() } : {})
+                    }
+                })
+
+                // Release volunteers if resolving/cancelling
+                if (['RESOLVED', 'CANCELLED'].includes(newStatus) && publicReq.assignedTo) {
+                    await prisma.volunteer.update({
+                        where: { id: publicReq.assignedTo },
+                        data: { status: 'AVAILABLE' }
+                    }).catch(() => { }) // ignore if volunteer not found
+                }
+
+                return res.json({ success: true, status: newStatus })
+            }
+
+            // Internal EmergencyRequest
+            const request = await prisma.emergencyRequest.findUnique({
+                where: { id: requestId },
+                include: { assignedVolunteers: true }
+            })
+            if (!request) return res.status(404).json({ error: 'Request not found' })
+
+            await prisma.emergencyRequest.update({
+                where: { id: requestId },
+                data: {
+                    status: newStatus,
+                    ...(newStatus === 'RESOLVED' ? { resolvedAt: new Date() } : {})
+                }
+            })
+
+            // Release assigned volunteers back to AVAILABLE
+            if (['RESOLVED', 'CANCELLED'].includes(newStatus) && request.assignedVolunteers?.length > 0) {
+                await prisma.volunteer.updateMany({
+                    where: { id: { in: request.assignedVolunteers.map((v: any) => v.id) } },
+                    data: { status: 'AVAILABLE' }
+                })
+            }
+
+            // If this was linked to a portal request, update that too
+            const details = typeof request.details === 'object' ? request.details : {} as any
+            if (details?.requestId) {
+                await (prisma as any).publicHelpRequest.update({
+                    where: { requestId: details.requestId },
+                    data: {
+                        status: newStatus,
+                        ...(newStatus === 'RESOLVED' ? { resolvedAt: new Date() } : {})
+                    }
+                }).catch(() => { })
+            }
+
+            // Update missions
+            await prisma.mission.updateMany({
+                where: { emergencyRequestId: requestId },
+                data: { status: newStatus === 'RESOLVED' ? 'COMPLETED' : newStatus }
+            })
+
+            return res.json({ success: true, status: newStatus })
+        }
+
         return res.status(404).json({ error: 'Not found' })
     } catch (error) {
         return handleHttpError(res, error)
