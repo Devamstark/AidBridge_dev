@@ -1,8 +1,8 @@
-import type { NextApiRequest, NextApiResponse } from 'next'
-import { prisma } from '../_lib/db'
-import { requireAuth } from '../_lib/auth'
+import type { VercelRequest, VercelResponse } from '@vercel/node'
+import { prisma } from '../_lib/db.js'
+import { requireAuth } from '../_lib/auth.js'
 import { z } from 'zod'
-import { handleHttpError, methodNotAllowed } from '../_lib/utils'
+import { handleHttpError, methodNotAllowed } from '../_lib/utils.js'
 
 const updateVolunteerSchema = z.object({
   status: z.string().optional(),
@@ -18,14 +18,14 @@ const updateVolunteerSchema = z.object({
 })
 
 export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
+  req: VercelRequest,
+  res: VercelResponse
 ) {
   try {
     await requireAuth(req)
-    
+
     const { id } = req.query
-    
+
     if (req.method === 'GET') {
       const volunteer = await prisma.volunteer.findUnique({
         where: { id: id as string },
@@ -44,17 +44,17 @@ export default async function handler(
           },
         },
       })
-      
+
       if (!volunteer) {
         return res.status(404).json({ error: 'Volunteer not found' })
       }
-      
+
       return res.json(volunteer)
     }
-    
+
     if (req.method === 'PUT') {
       const body = updateVolunteerSchema.parse(req.body)
-      
+
       const volunteer = await prisma.volunteer.update({
         where: { id: id as string },
         data: body,
@@ -68,18 +68,18 @@ export default async function handler(
           }
         },
       })
-      
+
       return res.json(volunteer)
     }
-    
+
     if (req.method === 'DELETE') {
       await prisma.volunteer.delete({
         where: { id: id as string },
       })
-      
+
       return res.status(204).end()
     }
-    
+
     return methodNotAllowed(res, ['GET', 'PUT', 'DELETE'])
   } catch (error) {
     return handleHttpError(res, error)

@@ -1,24 +1,24 @@
-import type { NextApiRequest, NextApiResponse } from 'next'
-import { prisma } from '../_lib/db'
-import { getUserFromToken } from '../_lib/auth'
-import { handleHttpError } from '../_lib/utils'
+import type { VercelRequest, VercelResponse } from '@vercel/node'
+import { prisma } from '../_lib/db.js'
+import { getUserFromToken } from '../_lib/auth.js'
+import { handleHttpError } from '../_lib/utils.js'
 
 export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
+  req: VercelRequest,
+  res: VercelResponse
 ) {
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Method not allowed' })
   }
-  
+
   try {
     const token = req.headers.authorization?.replace('Bearer ', '')
     const user = await getUserFromToken(token)
-    
+
     if (!user) {
       return res.status(401).json({ error: 'Unauthorized' })
     }
-    
+
     // Get full user data with preferences
     const fullUser = await prisma.user.findUnique({
       where: { id: user.id },
@@ -37,7 +37,7 @@ export default async function handler(
         createdAt: true,
       }
     })
-    
+
     res.json(fullUser)
   } catch (error) {
     return handleHttpError(res, error)

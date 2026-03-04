@@ -1,7 +1,7 @@
-import type { NextApiRequest, NextApiResponse } from 'next'
-import { prisma } from '../_lib/db'
+import type { VercelRequest, VercelResponse } from '@vercel/node'
+import { prisma } from '../_lib/db.js'
 import { z } from 'zod'
-import { handleHttpError, methodNotAllowed } from '../_lib/utils'
+import { handleHttpError, methodNotAllowed } from '../_lib/utils.js'
 
 const helpRequestSchema = z.object({
   fullName: z.string().min(2),
@@ -17,8 +17,8 @@ const helpRequestSchema = z.object({
 })
 
 export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
+  req: VercelRequest,
+  res: VercelResponse
 ) {
   try {
     if (req.method !== 'POST') {

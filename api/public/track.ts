@@ -1,10 +1,10 @@
-import type { NextApiRequest, NextApiResponse } from 'next'
-import { prisma } from '../_lib/db'
-import { handleHttpError, methodNotAllowed } from '../_lib/utils'
+import type { VercelRequest, VercelResponse } from '@vercel/node'
+import { prisma } from '../_lib/db.js'
+import { handleHttpError, methodNotAllowed } from '../_lib/utils.js'
 
 export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
+  req: VercelRequest,
+  res: VercelResponse
 ) {
   try {
     if (req.method !== 'GET') {
