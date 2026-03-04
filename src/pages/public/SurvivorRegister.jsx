@@ -50,7 +50,7 @@ export default function SurvivorRegister() {
         <Card className="max-w-md w-full bg-white border-0 shadow-2xl">
           <CardHeader className="text-center pb-2">
             <div className="w-20 h-20 rounded-full bg-gradient-to-br from-green-500 to-green-600 flex items-center justify-center mx-auto mb-4 shadow-lg">
-              <CheckCircle className="w-10 h-10 text-white" />
+              <CheckCircle className="w-10 h-10 text-foreground" />
             </div>
             <CardTitle className="text-2xl font-bold text-slate-900">Registration Submitted!</CardTitle>
           </CardHeader>
@@ -59,11 +59,11 @@ export default function SurvivorRegister() {
               <p className="text-sm text-green-700 font-medium mb-1">Your Case Number</p>
               <p className="text-3xl font-bold text-green-800 font-mono">{success.caseNumber}</p>
             </div>
-            <p className="text-sm text-slate-600 text-center">
+            <p className="text-sm text-muted-foreground text-center">
               Save this Case Number to track your registration status. A coordinator will contact you soon.
             </p>
             <div className="flex gap-2">
-              <Button onClick={() => navigate('/track')} className="flex-1 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold">
+              <Button onClick={() => navigate('/track')} className="flex-1 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-foreground font-semibold">
                 Track Status
               </Button>
               <Button onClick={() => navigate('/help')} variant="outline" className="flex-1 border-slate-300 hover:bg-slate-100">
@@ -82,7 +82,7 @@ export default function SurvivorRegister() {
         <Button
           variant="ghost"
           onClick={() => navigate('/')}
-          className="mb-6 text-slate-600 hover:text-slate-900 hover:bg-white/50"
+          className="mb-6 text-muted-foreground hover:text-slate-900 hover:bg-white/50"
         >
           <ArrowLeft className="w-4 h-4 mr-2" /> Back to Home
         </Button>
@@ -91,11 +91,11 @@ export default function SurvivorRegister() {
           <CardHeader className="pb-4">
             <div className="flex items-center gap-3 mb-2">
               <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-lg">
-                <FileText className="w-6 h-6 text-white" />
+                <FileText className="w-6 h-6 text-foreground" />
               </div>
               <div>
                 <CardTitle className="text-2xl font-bold text-slate-900">Survivor Registration</CardTitle>
-                <p className="text-sm text-slate-600">Register for disaster assistance and support</p>
+                <p className="text-sm text-muted-foreground">Register for disaster assistance and support</p>
               </div>
             </div>
 
@@ -107,7 +107,7 @@ export default function SurvivorRegister() {
                 </div>
               ))}
             </div>
-            <div className="flex justify-between mt-2 text-xs text-slate-600">
+            <div className="flex justify-between mt-2 text-xs text-muted-foreground">
               <span>Personal Info</span>
               <span>Household</span>
               <span>Consent</span>
@@ -179,7 +179,7 @@ export default function SurvivorRegister() {
                       />
                     </div>
                   </div>
-                  <Button type="button" onClick={nextStep} className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-6">
+                  <Button type="button" onClick={nextStep} className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-foreground font-semibold py-6">
                     Next: Household Info
                   </Button>
                 </>
@@ -204,13 +204,13 @@ export default function SurvivorRegister() {
                     />
                   </div>
                   <div className="bg-slate-50 border border-slate-200 rounded-lg p-4">
-                    <p className="text-sm text-slate-600">Additional household members can be added after initial registration.</p>
+                    <p className="text-sm text-muted-foreground">Additional household members can be added after initial registration.</p>
                   </div>
                   <div className="flex gap-2">
                     <Button type="button" onClick={prevStep} variant="outline" className="flex-1 border-slate-300 hover:bg-slate-100">
                       Back
                     </Button>
-                    <Button type="button" onClick={nextStep} className="flex-1 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-semibold py-6">
+                    <Button type="button" onClick={nextStep} className="flex-1 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-foreground font-semibold py-6">
                       Next: Consent
                     </Button>
                   </div>
@@ -235,7 +235,7 @@ export default function SurvivorRegister() {
                       />
                       <div>
                         <Label htmlFor="consentContact" className="text-slate-700 font-medium cursor-pointer">Contact Consent</Label>
-                        <p className="text-xs text-slate-500 mt-1">I agree to be contacted by aid workers via phone or email.</p>
+                        <p className="text-xs text-muted-foreground mt-1">I agree to be contacted by aid workers via phone or email.</p>
                       </div>
                     </div>
                     <div className="flex items-start gap-3 p-4 bg-slate-50 border border-slate-200 rounded-lg">
@@ -247,7 +247,7 @@ export default function SurvivorRegister() {
                       />
                       <div>
                         <Label htmlFor="consentDataSharing" className="text-slate-700 font-medium cursor-pointer">Data Sharing Consent</Label>
-                        <p className="text-xs text-slate-500 mt-1">I agree to share my information with partner organizations for better assistance.</p>
+                        <p className="text-xs text-muted-foreground mt-1">I agree to share my information with partner organizations for better assistance.</p>
                       </div>
                     </div>
                   </div>
@@ -255,7 +255,7 @@ export default function SurvivorRegister() {
                     <Button type="button" onClick={prevStep} variant="outline" className="flex-1 border-slate-300 hover:bg-slate-100">
                       Back
                     </Button>
-                    <Button type="submit" disabled={isLoading} className="flex-1 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white font-semibold py-6">
+                    <Button type="submit" disabled={isLoading} className="flex-1 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-foreground font-semibold py-6">
                       {isLoading ? 'Submitting...' : 'Submit Registration'}
                     </Button>
                   </div>

@@ -65,37 +65,37 @@ export default function Distributions() {
       } />
 
       <div className="relative mb-6">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-        <Input placeholder="Search distributions..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-10 bg-slate-800 border-slate-700 text-white placeholder-slate-400" />
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+        <Input placeholder="Search distributions..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-10 bg-card border text-foreground placeholder-muted-foreground" />
       </div>
 
       {isLoading ? (
-        <Card className="bg-slate-800 border-slate-700"><CardContent className="p-4 space-y-3">{[1,2,3,4].map(i=><Skeleton key={i} className="h-10 w-full bg-slate-700"/>)}</CardContent></Card>
+        <Card className="bg-card border"><CardContent className="p-4 space-y-3">{[1,2,3,4].map(i=><Skeleton key={i} className="h-10 w-full bg-secondary"/>)}</CardContent></Card>
       ) : filtered.length === 0 ? (
         <EmptyState icon={Truck} title="No distributions recorded" description="Record your first resource distribution." />
       ) : (
-        <Card className="bg-slate-800 border-slate-700">
+        <Card className="bg-card border">
           <div className="overflow-x-auto">
             <Table>
               <TableHeader>
-                <TableRow className="bg-slate-900/50 border-b border-slate-700">
-                  <TableHead className="text-slate-300">Resource</TableHead>
-                  <TableHead className="text-slate-300">Quantity</TableHead>
-                  <TableHead className="text-slate-300">Type</TableHead>
-                  <TableHead className="hidden md:table-cell text-slate-300">From Location</TableHead>
-                  <TableHead className="hidden md:table-cell text-slate-300">Disaster</TableHead>
-                  <TableHead className="hidden sm:table-cell text-slate-300">Date</TableHead>
+                <TableRow className="bg-background/50 border-b border">
+                  <TableHead className="text-muted-foreground">Resource</TableHead>
+                  <TableHead className="text-muted-foreground">Quantity</TableHead>
+                  <TableHead className="text-muted-foreground">Type</TableHead>
+                  <TableHead className="hidden md:table-cell text-muted-foreground">From Location</TableHead>
+                  <TableHead className="hidden md:table-cell text-muted-foreground">Disaster</TableHead>
+                  <TableHead className="hidden sm:table-cell text-muted-foreground">Date</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {filtered.map(d => (
-                  <TableRow key={d.id} className="border-b border-slate-700 hover:bg-slate-700/30">
-                    <TableCell className="font-medium text-sm text-slate-200">{d.resource?.name || resourceMap[d.resourceId] || "—"}</TableCell>
-                    <TableCell className="font-semibold text-sm text-slate-300">{d.quantity}</TableCell>
+                  <TableRow key={d.id} className="border-b border hover:bg-secondary/30">
+                    <TableCell className="font-medium text-sm text-foreground">{d.resource?.name || resourceMap[d.resourceId] || "—"}</TableCell>
+                    <TableCell className="font-semibold text-sm text-muted-foreground">{d.quantity}</TableCell>
                     <TableCell><StatusBadge status={d.distributionType} /></TableCell>
-                    <TableCell className="hidden md:table-cell text-sm text-slate-400">{locationMap[d.locationId] || "—"}</TableCell>
-                    <TableCell className="hidden md:table-cell text-sm text-slate-400">{disasterMap[d.disasterId] || "—"}</TableCell>
-                    <TableCell className="hidden sm:table-cell text-xs text-slate-500">{d.createdAt ? format(new Date(d.createdAt), "MMM d, h:mm a") : "—"}</TableCell>
+                    <TableCell className="hidden md:table-cell text-sm text-muted-foreground">{locationMap[d.locationId] || "—"}</TableCell>
+                    <TableCell className="hidden md:table-cell text-sm text-muted-foreground">{disasterMap[d.disasterId] || "—"}</TableCell>
+                    <TableCell className="hidden sm:table-cell text-xs text-muted-foreground">{d.createdAt ? format(new Date(d.createdAt), "MMM d, h:mm a") : "—"}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>

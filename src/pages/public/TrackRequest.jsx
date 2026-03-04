@@ -47,7 +47,7 @@ export default function TrackRequest() {
         <Button
           variant="ghost"
           onClick={() => navigate('/')}
-          className="mb-6 text-slate-600 hover:text-slate-900 hover:bg-white/50"
+          className="mb-6 text-muted-foreground hover:text-slate-900 hover:bg-white/50"
         >
           <ArrowLeft className="w-4 h-4 mr-2" /> Back to Home
         </Button>
@@ -56,11 +56,11 @@ export default function TrackRequest() {
           <CardHeader className="pb-4">
             <div className="flex items-center gap-3 mb-2">
               <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-green-500 to-green-600 flex items-center justify-center shadow-lg">
-                <Search className="w-6 h-6 text-white" />
+                <Search className="w-6 h-6 text-foreground" />
               </div>
               <div>
                 <CardTitle className="text-2xl font-bold text-slate-900">Track Your Request</CardTitle>
-                <p className="text-sm text-slate-600">Enter your Request ID or Case Number</p>
+                <p className="text-sm text-muted-foreground">Enter your Request ID or Case Number</p>
               </div>
             </div>
           </CardHeader>
@@ -80,7 +80,7 @@ export default function TrackRequest() {
                     <Button
                       type="submit"
                       disabled={isLoading}
-                      className="bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-semibold px-8"
+                      className="bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-foreground font-semibold px-8"
                     >
                       {isLoading ? 'Searching...' : 'Track'}
                     </Button>
@@ -101,12 +101,12 @@ export default function TrackRequest() {
                 <div className={`rounded-xl p-6 ${STATUS_CONFIG[result.status]?.lightColor || 'bg-slate-50'} border-2 ${STATUS_CONFIG[result.status]?.color.replace('bg-', 'border-') || 'border-slate-200'}`}>
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm font-medium text-slate-600 mb-1">
+                      <p className="text-sm font-medium text-muted-foreground mb-1">
                         {result.type === 'HELP_REQUEST' ? 'Request ID' : 'Case Number'}
                       </p>
                       <p className="text-3xl font-bold text-slate-900 font-mono">{result.requestId || result.caseNumber}</p>
                     </div>
-                    <Badge className={`${STATUS_CONFIG[result.status]?.color} text-white px-4 py-2 text-sm font-semibold`}>
+                    <Badge className={`${STATUS_CONFIG[result.status]?.color} text-foreground px-4 py-2 text-sm font-semibold`}>
                       <StatusIcon className="w-4 h-4 mr-2" />
                       {STATUS_CONFIG[result.status]?.label || result.status}
                     </Badge>
@@ -120,7 +120,7 @@ export default function TrackRequest() {
                       {result.responder && (
                         <div className="sm:col-span-2 p-4 bg-blue-50 border border-blue-100 rounded-lg flex items-center justify-between">
                           <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center text-white">
+                            <div className="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center text-foreground">
                               <User className="w-5 h-5" />
                             </div>
                             <div>
@@ -137,19 +137,19 @@ export default function TrackRequest() {
                         </div>
                       )}
                       <div className="p-4 bg-slate-50 rounded-lg">
-                        <p className="text-xs text-slate-500 font-medium mb-1">Emergency Type</p>
+                        <p className="text-xs text-muted-foreground font-medium mb-1">Emergency Type</p>
                         <p className="text-slate-900 font-semibold">{result.emergencyType}</p>
                       </div>
                       <div className="p-4 bg-slate-50 rounded-lg">
-                        <p className="text-xs text-slate-500 font-medium mb-1">Location</p>
+                        <p className="text-xs text-muted-foreground font-medium mb-1">Location</p>
                         <p className="text-slate-900 font-semibold">{result.location}</p>
                       </div>
                       <div className="p-4 bg-slate-50 rounded-lg">
-                        <p className="text-xs text-slate-500 font-medium mb-1">People Count</p>
+                        <p className="text-xs text-muted-foreground font-medium mb-1">People Count</p>
                         <p className="text-slate-900 font-semibold">{result.peopleCount} people</p>
                       </div>
                       <div className="p-4 bg-slate-50 rounded-lg">
-                        <p className="text-xs text-slate-500 font-medium mb-1">Submitted</p>
+                        <p className="text-xs text-muted-foreground font-medium mb-1">Submitted</p>
                         <p className="text-slate-900 font-semibold">{new Date(result.createdAt).toLocaleString()}</p>
                       </div>
                     </div>
@@ -168,7 +168,7 @@ export default function TrackRequest() {
                             <div key={index} className="flex gap-4">
                               <div className="flex flex-col items-center">
                                 <div className={`w-10 h-10 rounded-full ${config.color} flex items-center justify-center shadow-lg`}>
-                                  <EventIcon className="w-5 h-5 text-white" />
+                                  <EventIcon className="w-5 h-5 text-foreground" />
                                 </div>
                                 {index < result.timeline.length - 1 && (
                                   <div className="w-0.5 h-12 bg-slate-200 mt-2" />
@@ -176,7 +176,7 @@ export default function TrackRequest() {
                               </div>
                               <div className="flex-1 pt-1">
                                 <p className="font-semibold text-slate-900">{config.label}</p>
-                                <p className="text-sm text-slate-500">{new Date(event.timestamp).toLocaleString()}</p>
+                                <p className="text-sm text-muted-foreground">{new Date(event.timestamp).toLocaleString()}</p>
                               </div>
                             </div>
                           );
@@ -188,11 +188,11 @@ export default function TrackRequest() {
                   <div className="space-y-4">
                     <div className="grid sm:grid-cols-2 gap-4">
                       <div className="p-4 bg-slate-50 rounded-lg">
-                        <p className="text-xs text-slate-500 font-medium mb-1">Name</p>
+                        <p className="text-xs text-muted-foreground font-medium mb-1">Name</p>
                         <p className="text-slate-900 font-semibold">{result.firstName} {result.lastName}</p>
                       </div>
                       <div className="p-4 bg-slate-50 rounded-lg">
-                        <p className="text-xs text-slate-500 font-medium mb-1">Submitted</p>
+                        <p className="text-xs text-muted-foreground font-medium mb-1">Submitted</p>
                         <p className="text-slate-900 font-semibold">{new Date(result.createdAt).toLocaleString()}</p>
                       </div>
                     </div>

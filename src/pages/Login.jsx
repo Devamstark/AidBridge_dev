@@ -52,18 +52,18 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-4">
-      <Card className="w-full max-w-2xl bg-slate-800 border-slate-700">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-secondary/30 to-background p-4">
+      <Card className="w-full max-w-2xl bg-card border">
         <CardHeader className="space-y-3">
           <div className="flex justify-center mb-2">
             <div className="w-16 h-16 rounded-full bg-red-900/30 flex items-center justify-center">
               <ShieldAlert className="w-8 h-8 text-red-500" />
             </div>
           </div>
-          <CardTitle className="text-2xl font-bold text-center text-white">
+          <CardTitle className="text-2xl font-bold text-center text-foreground">
             AidBridge Login
           </CardTitle>
-          <p className="text-center text-sm text-slate-400">
+          <p className="text-center text-sm text-muted-foreground">
             Disaster Relief Coordination Platform
           </p>
         </CardHeader>
@@ -75,48 +75,48 @@ export default function LoginPage() {
           )}
 
           <div className="mb-6">
-            <h3 className="text-sm font-semibold text-slate-300 mb-3">Select a Role to Test:</h3>
+            <h3 className="text-sm font-semibold text-muted-foreground mb-3">Select a Role to Test:</h3>
             <div className="grid grid-cols-3 gap-3">
-              <Button variant="outline" onClick={() => handleRoleLogin("ADMIN")} className="border-red-600 text-red-400 hover:bg-red-950">
+              <Button variant="outline" onClick={() => handleRoleLogin("ADMIN")} className="border-red-500 text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-950">
                 <Shield className="w-4 h-4 mr-2" /> Admin
               </Button>
-              <Button variant="outline" onClick={() => handleRoleLogin("COORDINATOR")} className="border-blue-600 text-blue-400 hover:bg-blue-950">
+              <Button variant="outline" onClick={() => handleRoleLogin("COORDINATOR")} className="border-blue-500 text-blue-600 hover:bg-blue-50 dark:text-blue-400 dark:hover:bg-blue-950">
                 <UserCheck className="w-4 h-4 mr-2" /> Coordinator
               </Button>
-              <Button variant="outline" onClick={() => handleRoleLogin("VOLUNTEER")} className="border-green-600 text-green-400 hover:bg-green-950">
+              <Button variant="outline" onClick={() => handleRoleLogin("VOLUNTEER")} className="border-green-500 text-green-600 hover:bg-green-50 dark:text-green-400 dark:hover:bg-green-950">
                 <User className="w-4 h-4 mr-2" /> Volunteer
               </Button>
             </div>
-            <div className="mt-3 space-y-1 text-xs text-slate-400">
-              <p><span className="text-red-400 font-semibold">Admin:</span> Full access to everything</p>
-              <p><span className="text-blue-400 font-semibold">Coordinator:</span> Manage disasters, survivors, volunteers</p>
-              <p><span className="text-green-400 font-semibold">Volunteer:</span> Limited - dashboard, locations, own profile</p>
+            <div className="mt-3 space-y-1 text-xs text-muted-foreground">
+              <p><span className="text-red-600 dark:text-red-400 font-semibold">Admin:</span> Full access to everything</p>
+              <p><span className="text-blue-600 dark:text-blue-400 font-semibold">Coordinator:</span> Manage disasters, survivors, volunteers</p>
+              <p><span className="text-green-600 dark:text-green-400 font-semibold">Volunteer:</span> Limited - dashboard, locations, own profile</p>
             </div>
           </div>
 
           <div className="relative mb-6">
-            <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-slate-600"></div></div>
+            <div className="absolute inset-0 flex items-center"><div className="w-full border-t border"></div></div>
             <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-slate-800 px-2 text-slate-400">Or login manually</span>
+              <span className="bg-card px-2 text-muted-foreground">Or login manually</span>
             </div>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <Label className="text-slate-300">Email</Label>
-              <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="admin@aidbridge.org" className="bg-slate-700 border-slate-600 text-white" required />
+              <Label className="text-muted-foreground">Email</Label>
+              <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="admin@aidbridge.org" className="bg-secondary border text-foreground" required />
             </div>
             <div>
-              <Label className="text-slate-300">Password</Label>
-              <Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" className="bg-slate-700 border-slate-600 text-white" required />
+              <Label className="text-muted-foreground">Password</Label>
+              <Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" className="bg-secondary border text-foreground" required />
             </div>
-            <Button type="submit" className="w-full bg-red-600 hover:bg-red-700" disabled={isLoading}>
+            <Button type="submit" className="w-full bg-primary hover:bg-primary/90" disabled={isLoading}>
               <LogIn className="w-4 h-4 mr-2" /> {isLoading ? "Signing in..." : "Sign In"}
             </Button>
           </form>
 
-          <div className="mt-6 p-4 bg-slate-700/50 rounded-lg text-xs text-slate-400 text-center">
-            <strong className="text-slate-300">Note:</strong> Demo environment with role-based access control.
+          <div className="mt-6 p-4 bg-secondary/50 rounded-lg text-xs text-muted-foreground text-center">
+            <strong className="text-muted-foreground">Note:</strong> Demo environment with role-based access control.
           </div>
         </CardContent>
       </Card>

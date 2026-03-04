@@ -7,23 +7,23 @@ import { ShieldAlert, Home, LogIn } from "lucide-react";
 export default function UnauthorizedPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-4">
-      <Card className="w-full max-w-md bg-slate-800 border-slate-700">
+      <Card className="w-full max-w-md bg-card border">
         <CardHeader className="space-y-3">
           <div className="flex justify-center mb-2">
             <div className="w-16 h-16 rounded-full bg-red-900/30 flex items-center justify-center">
               <ShieldAlert className="w-8 h-8 text-red-500" />
             </div>
           </div>
-          <CardTitle className="text-2xl font-bold text-center text-white">
+          <CardTitle className="text-2xl font-bold text-center text-foreground">
             Access Denied
           </CardTitle>
-          <p className="text-center text-sm text-slate-400">
+          <p className="text-center text-sm text-muted-foreground">
             You don't have permission to access this page
           </p>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="p-4 bg-slate-700/50 rounded-lg border border-slate-600">
-            <p className="text-sm text-slate-300 text-center">
+          <div className="p-4 bg-secondary/50 rounded-lg border border">
+            <p className="text-sm text-muted-foreground text-center">
               This page requires higher privileges. Please contact your administrator if you believe this is an error.
             </p>
           </div>
@@ -37,7 +37,7 @@ export default function UnauthorizedPage() {
             </Link>
             
             <Link to="/login">
-              <Button variant="outline" className="w-full border-slate-600 text-slate-300 hover:bg-slate-700">
+              <Button variant="outline" className="w-full border text-muted-foreground hover:bg-secondary">
                 <LogIn className="w-4 h-4 mr-2" />
                 Login with Different Account
               </Button>
@@ -45,7 +45,7 @@ export default function UnauthorizedPage() {
           </div>
 
           <div className="text-center">
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-muted-foreground">
               Error Code: 403 - Forbidden
             </p>
           </div>

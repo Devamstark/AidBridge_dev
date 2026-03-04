@@ -62,12 +62,12 @@ export default function Locations() {
       } />
 
       <div className="relative mb-6">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-        <Input placeholder="Search locations..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-10 bg-slate-800 border-slate-700 text-white placeholder-slate-400" />
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+        <Input placeholder="Search locations..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-10 bg-card border text-foreground placeholder-muted-foreground" />
       </div>
 
       {isLoading ? (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">{[1, 2, 3].map(i => <Skeleton key={i} className="h-44 bg-slate-800" />)}</div>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">{[1, 2, 3].map(i => <Skeleton key={i} className="h-44 bg-card" />)}</div>
       ) : filtered.length === 0 ? (
         <EmptyState icon={MapPin} title="No locations found" description="Add your first shelter or facility." />
       ) : (
@@ -75,7 +75,7 @@ export default function Locations() {
           {filtered.map(l => {
             const occupancyPct = l.capacity > 0 ? Math.round((l.currentOccupancy / l.capacity) * 100) : 0;
             return (
-              <Card key={l.id} className="bg-slate-800 border-slate-700 hover:shadow-md transition-shadow">
+              <Card key={l.id} className="bg-card border hover:shadow-md transition-shadow">
                 <CardContent className="p-5">
                   <div className="flex items-start justify-between mb-3">
                     <div className="flex items-center gap-2">
@@ -83,21 +83,21 @@ export default function Locations() {
                         <Building2 className="w-4 h-4 text-blue-400" />
                       </div>
                       <div>
-                        <h3 className="font-semibold text-slate-200 text-sm">{l.name}</h3>
-                        <p className="text-xs text-slate-500 capitalize">{l.locationType?.toLowerCase()}</p>
+                        <h3 className="font-semibold text-foreground text-sm">{l.name}</h3>
+                        <p className="text-xs text-muted-foreground capitalize">{l.locationType?.toLowerCase()}</p>
                       </div>
                     </div>
                     <StatusBadge status={l.operationalStatus} />
                   </div>
-                  {l.address && <p className="text-xs text-slate-400 mb-3 flex items-center gap-1"><MapPin className="w-3 h-3" />{l.address}</p>}
+                  {l.address && <p className="text-xs text-muted-foreground mb-3 flex items-center gap-1"><MapPin className="w-3 h-3" />{l.address}</p>}
                   <div className="space-y-2">
                     <div className="flex items-center justify-between text-xs">
-                      <span className="text-slate-400 flex items-center gap-1"><Users className="w-3 h-3" /> Occupancy</span>
-                      <span className="font-medium text-slate-300">{l.currentOccupancy || 0} / {l.capacity || "—"}</span>
+                      <span className="text-muted-foreground flex items-center gap-1"><Users className="w-3 h-3" /> Occupancy</span>
+                      <span className="font-medium text-muted-foreground">{l.currentOccupancy || 0} / {l.capacity || "—"}</span>
                     </div>
-                    <Progress value={occupancyPct} className={cn("h-2 bg-slate-700", occupancyPct > 90 ? "[&>div]:bg-red-500" : occupancyPct > 70 ? "[&>div]:bg-amber-500" : "[&>div]:bg-emerald-500")} />
+                    <Progress value={occupancyPct} className={cn("h-2 bg-secondary", occupancyPct > 90 ? "[&>div]:bg-red-500" : occupancyPct > 70 ? "[&>div]:bg-amber-500" : "[&>div]:bg-emerald-500")} />
                   </div>
-                  {l.contactPhone && <p className="text-xs text-slate-500 mt-3 flex items-center gap-1"><Phone className="w-3 h-3" />{l.contactPhone}</p>}
+                  {l.contactPhone && <p className="text-xs text-muted-foreground mt-3 flex items-center gap-1"><Phone className="w-3 h-3" />{l.contactPhone}</p>}
                 </CardContent>
               </Card>
             );
@@ -106,18 +106,18 @@ export default function Locations() {
       )}
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="max-w-lg bg-slate-800 border-slate-700 text-white">
-          <DialogHeader><DialogTitle className="text-white">Add Location</DialogTitle></DialogHeader>
+        <DialogContent className="max-w-lg bg-card border text-foreground">
+          <DialogHeader><DialogTitle className="text-foreground">Add Location</DialogTitle></DialogHeader>
           <div className="space-y-4 mt-2">
-            <div><Label className="text-slate-300">Name *</Label><Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="e.g. Central High School Shelter" /></div>
+            <div><Label className="text-muted-foreground">Name *</Label><Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="e.g. Central High School Shelter" /></div>
             <div className="grid grid-cols-2 gap-4">
-              <div><Label className="text-slate-300">Type</Label>
+              <div><Label className="text-muted-foreground">Type</Label>
                 <Select value={form.locationType} onValueChange={(v) => setForm({ ...form, locationType: v })}>
                   <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>{LOCATION_TYPES.map(t => <SelectItem key={t} value={t} className="capitalize">{t.toLowerCase()}</SelectItem>)}</SelectContent>
                 </Select>
               </div>
-              <div><Label className="text-slate-300">Status</Label>
+              <div><Label className="text-muted-foreground">Status</Label>
                 <Select value={form.operationalStatus} onValueChange={(v) => setForm({ ...form, operationalStatus: v })}>
                   <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>
@@ -126,14 +126,14 @@ export default function Locations() {
                 </Select>
               </div>
             </div>
-            <div><Label className="text-slate-300">Address</Label><Input value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} placeholder="Full address" /></div>
+            <div><Label className="text-muted-foreground">Address</Label><Input value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} placeholder="Full address" /></div>
             <div className="grid grid-cols-2 gap-4">
-              <div><Label className="text-slate-300">Latitude</Label><Input type="number" step="any" value={form.latitude} onChange={(e) => setForm({ ...form, latitude: parseFloat(e.target.value) || 0 })} /></div>
-              <div><Label className="text-slate-300">Longitude</Label><Input type="number" step="any" value={form.longitude} onChange={(e) => setForm({ ...form, longitude: parseFloat(e.target.value) || 0 })} /></div>
+              <div><Label className="text-muted-foreground">Latitude</Label><Input type="number" step="any" value={form.latitude} onChange={(e) => setForm({ ...form, latitude: parseFloat(e.target.value) || 0 })} /></div>
+              <div><Label className="text-muted-foreground">Longitude</Label><Input type="number" step="any" value={form.longitude} onChange={(e) => setForm({ ...form, longitude: parseFloat(e.target.value) || 0 })} /></div>
             </div>
             <div className="grid grid-cols-2 gap-4">
-              <div><Label className="text-slate-300">Capacity</Label><Input type="number" value={form.capacity} onChange={(e) => setForm({ ...form, capacity: parseInt(e.target.value) || 0 })} /></div>
-              <div><Label className="text-slate-300">Disaster Event</Label>
+              <div><Label className="text-muted-foreground">Capacity</Label><Input type="number" value={form.capacity} onChange={(e) => setForm({ ...form, capacity: parseInt(e.target.value) || 0 })} /></div>
+              <div><Label className="text-muted-foreground">Disaster Event</Label>
                 <Select value={form.disasterId} onValueChange={(v) => setForm({ ...form, disasterId: v })}>
                   <SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger>
                   <SelectContent>{disasters.map(d => <SelectItem key={d.id} value={d.id}>{d.name}</SelectItem>)}</SelectContent>
@@ -141,8 +141,8 @@ export default function Locations() {
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4">
-              <div><Label className="text-slate-300">Manager Name</Label><Input value={form.managerName} onChange={(e) => setForm({ ...form, managerName: e.target.value })} /></div>
-              <div><Label className="text-slate-300">Contact Phone</Label><Input value={form.contactPhone} onChange={(e) => setForm({ ...form, contactPhone: e.target.value })} /></div>
+              <div><Label className="text-muted-foreground">Manager Name</Label><Input value={form.managerName} onChange={(e) => setForm({ ...form, managerName: e.target.value })} /></div>
+              <div><Label className="text-muted-foreground">Contact Phone</Label><Input value={form.contactPhone} onChange={(e) => setForm({ ...form, contactPhone: e.target.value })} /></div>
             </div>
             <div className="flex justify-end gap-2 pt-2">
               <Button variant="outline" onClick={() => setOpen(false)}>Cancel</Button>

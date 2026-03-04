@@ -55,33 +55,33 @@ export default function Resources() {
       } />
 
       <div className="relative mb-6">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-        <Input placeholder="Search resources..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-10 bg-slate-800 border-slate-700 text-white placeholder-slate-400" />
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+        <Input placeholder="Search resources..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-10 bg-card border text-foreground placeholder-muted-foreground" />
       </div>
 
       {isLoading ? (
-        <Card className="bg-slate-800 border-slate-700"><CardContent className="p-4 space-y-3">{[1,2,3].map(i=><Skeleton key={i} className="h-10 w-full bg-slate-700"/>)}</CardContent></Card>
+        <Card className="bg-card border"><CardContent className="p-4 space-y-3">{[1,2,3].map(i=><Skeleton key={i} className="h-10 w-full bg-secondary"/>)}</CardContent></Card>
       ) : filtered.length === 0 ? (
         <EmptyState icon={Package} title="No resources found" description="Add relief supplies to the catalog." />
       ) : (
-        <Card className="bg-slate-800 border-slate-700">
+        <Card className="bg-card border">
           <div className="overflow-x-auto">
             <Table>
               <TableHeader>
-                <TableRow className="bg-slate-900/50 border-b border-slate-700">
-                  <TableHead className="text-slate-300">Name</TableHead>
-                  <TableHead className="text-slate-300">Category</TableHead>
-                  <TableHead className="text-slate-300">Unit</TableHead>
-                  <TableHead className="text-slate-300">Par Level</TableHead>
+                <TableRow className="bg-background/50 border-b border">
+                  <TableHead className="text-muted-foreground">Name</TableHead>
+                  <TableHead className="text-muted-foreground">Category</TableHead>
+                  <TableHead className="text-muted-foreground">Unit</TableHead>
+                  <TableHead className="text-muted-foreground">Par Level</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {filtered.map(r => (
-                  <TableRow key={r.id} className="border-b border-slate-700 hover:bg-slate-700/30">
-                    <TableCell><span className="font-medium text-sm text-slate-200">{r.name}</span><br/><span className="text-xs text-slate-500">{r.subcategory || r.category}</span></TableCell>
+                  <TableRow key={r.id} className="border-b border hover:bg-secondary/30">
+                    <TableCell><span className="font-medium text-sm text-foreground">{r.name}</span><br/><span className="text-xs text-muted-foreground">{r.subcategory || r.category}</span></TableCell>
                     <TableCell><Badge className={CATEGORY_COLORS[r.category] || "bg-gray-50 text-gray-700"} variant="secondary">{r.category}</Badge></TableCell>
-                    <TableCell className="text-sm text-slate-300">{r.unitType || "each"}</TableCell>
-                    <TableCell className="text-sm font-medium text-slate-300">{r.parLevel || 0}</TableCell>
+                    <TableCell className="text-sm text-muted-foreground">{r.unitType || "each"}</TableCell>
+                    <TableCell className="text-sm font-medium text-muted-foreground">{r.parLevel || 0}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>

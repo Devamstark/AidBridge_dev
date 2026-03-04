@@ -75,7 +75,7 @@ export default function HelpRequestForm() {
         <Card className="max-w-md w-full bg-white border-0 shadow-2xl">
           <CardHeader className="text-center pb-2">
             <div className="w-20 h-20 rounded-full bg-gradient-to-br from-green-500 to-green-600 flex items-center justify-center mx-auto mb-4 shadow-lg">
-              <AlertTriangle className="w-10 h-10 text-white" />
+              <AlertTriangle className="w-10 h-10 text-foreground" />
             </div>
             <CardTitle className="text-2xl font-bold text-slate-900">Request Submitted!</CardTitle>
           </CardHeader>
@@ -84,11 +84,11 @@ export default function HelpRequestForm() {
               <p className="text-sm text-green-700 font-medium mb-1">Your Request ID</p>
               <p className="text-3xl font-bold text-green-800 font-mono">{success.requestId}</p>
             </div>
-            <p className="text-sm text-slate-600 text-center">
+            <p className="text-sm text-muted-foreground text-center">
               Save this Request ID to track your request status. A volunteer will contact you soon.
             </p>
             <div className="flex gap-2">
-              <Button onClick={() => navigate('/track')} className="flex-1 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold">
+              <Button onClick={() => navigate('/track')} className="flex-1 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-foreground font-semibold">
                 Track Status
               </Button>
               <Button onClick={() => navigate('/help')} variant="outline" className="flex-1 border-slate-300 hover:bg-slate-100">
@@ -107,7 +107,7 @@ export default function HelpRequestForm() {
         <Button
           variant="ghost"
           onClick={() => navigate('/')}
-          className="mb-6 text-slate-600 hover:text-slate-900 hover:bg-white/50"
+          className="mb-6 text-muted-foreground hover:text-slate-900 hover:bg-white/50"
         >
           <ArrowLeft className="w-4 h-4 mr-2" /> Back to Home
         </Button>
@@ -116,14 +116,14 @@ export default function HelpRequestForm() {
           <CardHeader className="pb-4">
             <div className="flex items-center gap-3 mb-2">
               <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-red-500 to-red-600 flex items-center justify-center shadow-lg">
-                <AlertTriangle className="w-6 h-6 text-white" />
+                <AlertTriangle className="w-6 h-6 text-foreground" />
               </div>
               <div>
                 <CardTitle className="text-2xl font-bold text-slate-900">Emergency Help Request</CardTitle>
-                <p className="text-sm text-slate-600">Fill out this form to request immediate assistance</p>
+                <p className="text-sm text-muted-foreground">Fill out this form to request immediate assistance</p>
               </div>
             </div>
-            <div className="flex items-center gap-4 mt-4 text-sm text-slate-600">
+            <div className="flex items-center gap-4 mt-4 text-sm text-muted-foreground">
               <div className="flex items-center gap-1">
                 <Clock className="w-4 h-4" />
                 <span>Takes 2-3 minutes</span>
@@ -283,7 +283,7 @@ export default function HelpRequestForm() {
 
               <Button
                 type="submit"
-                className="w-full bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-semibold py-6 text-lg shadow-lg hover:shadow-xl transition-all"
+                className="w-full bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-foreground font-semibold py-6 text-lg shadow-lg hover:shadow-xl transition-all"
                 disabled={isLoading}
               >
                 {isLoading ? 'Submitting Request...' : 'Submit Emergency Request'}

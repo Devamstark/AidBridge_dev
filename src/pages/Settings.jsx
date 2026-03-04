@@ -365,7 +365,7 @@ export default function Settings() {
   if (loadingUser) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <RefreshCw className="w-8 h-8 animate-spin text-slate-400" />
+        <RefreshCw className="w-8 h-8 animate-spin text-muted-foreground" />
       </div>
     );
   }
@@ -388,15 +388,15 @@ export default function Settings() {
       <div className="max-w-4xl">
         <Accordion type="multiple" defaultValue={["account", "appearance"]} className="space-y-4">
           {/* ACCOUNT SETTINGS */}
-          <AccordionItem value="account" className="bg-slate-800 rounded-lg border border-slate-700">
+          <AccordionItem value="account" className="bg-card rounded-lg border border">
             <AccordionTrigger className="px-6 py-4 hover:no-underline">
               <div className="flex items-center gap-3">
                 <div className="w-9 h-9 rounded-lg bg-blue-900/30 flex items-center justify-center">
                   <User className="w-4 h-4 text-blue-400" />
                 </div>
                 <div className="text-left">
-                  <h3 className="font-semibold text-white">{t("settings.account")}</h3>
-                  <p className="text-xs text-slate-400">{t("settings.account_desc")}</p>
+                  <h3 className="font-semibold text-foreground">{t("settings.account")}</h3>
+                  <p className="text-xs text-muted-foreground">{t("settings.account_desc")}</p>
                 </div>
               </div>
             </AccordionTrigger>
@@ -404,31 +404,31 @@ export default function Settings() {
               <div className="space-y-6 pt-2">
                 {/* Profile */}
                 <div>
-                  <h4 className="text-sm font-semibold text-slate-200 mb-3 flex items-center gap-2">
+                  <h4 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
                     <User className="w-4 h-4" /> {t("settings.profile_info")}
                   </h4>
                   <div className="space-y-4">
                     <div>
-                      <Label className="text-slate-300">{t("settings.full_name")}</Label>
+                      <Label className="text-muted-foreground">{t("settings.full_name")}</Label>
                       <Input
                         value={profile.full_name}
                         onChange={(e) => { setProfile({ ...profile, full_name: e.target.value }); setHasChanges(true); }}
                         placeholder="Enter your full name"
-                        className="bg-slate-700 border-slate-600 text-white placeholder-slate-400"
+                        className="bg-secondary border text-foreground placeholder-muted-foreground"
                       />
                     </div>
                     <div>
-                      <Label className="text-slate-300">{t("settings.email")}</Label>
-                      <Input value={user.email} disabled className="bg-slate-700/50 text-slate-400 border-slate-600" />
-                      <p className="text-xs text-slate-500 mt-1">Email cannot be changed</p>
+                      <Label className="text-muted-foreground">{t("settings.email")}</Label>
+                      <Input value={user.email} disabled className="bg-secondary/50 text-muted-foreground border" />
+                      <p className="text-xs text-muted-foreground mt-1">Email cannot be changed</p>
                     </div>
                     <div>
-                      <Label className="text-slate-300">{t("settings.phone")}</Label>
+                      <Label className="text-muted-foreground">{t("settings.phone")}</Label>
                       <Input
                         value={profile.phone}
                         onChange={(e) => { setProfile({ ...profile, phone: e.target.value }); setHasChanges(true); }}
                         placeholder="(555) 123-4567"
-                        className="bg-slate-700 border-slate-600 text-white placeholder-slate-400"
+                        className="bg-secondary border text-foreground placeholder-muted-foreground"
                       />
                     </div>
                     <div>
@@ -444,22 +444,22 @@ export default function Settings() {
           </AccordionItem>
 
           {/* APPLICATION SETTINGS */}
-          <AccordionItem value="appearance" className="bg-slate-800 rounded-lg border border-slate-700">
+          <AccordionItem value="appearance" className="bg-card rounded-lg border border">
             <AccordionTrigger className="px-6 py-4 hover:no-underline">
               <div className="flex items-center gap-3">
                 <div className="w-9 h-9 rounded-lg bg-purple-900/30 flex items-center justify-center">
                   <Palette className="w-4 h-4 text-purple-400" />
                 </div>
                 <div className="text-left">
-                  <h3 className="font-semibold text-white">{t("settings.appearance")}</h3>
-                  <p className="text-xs text-slate-400">{t("settings.appearance_desc")}</p>
+                  <h3 className="font-semibold text-foreground">{t("settings.appearance")}</h3>
+                  <p className="text-xs text-muted-foreground">{t("settings.appearance_desc")}</p>
                 </div>
               </div>
             </AccordionTrigger>
             <AccordionContent className="px-6 pb-6">
               <div className="space-y-4 pt-2">
                 <div>
-                  <Label className="text-slate-300">{t("settings.theme")}</Label>
+                  <Label className="text-muted-foreground">{t("settings.theme")}</Label>
                   <div className="grid grid-cols-3 gap-3 mt-2">
                     {[
                       { value: "light", icon: Sun, label: t("settings.light") },
@@ -470,19 +470,19 @@ export default function Settings() {
                         key={value}
                         onClick={() => handlePreferenceChange("theme", value)}
                         className={`flex flex-col items-center gap-2 p-3 rounded-lg border-2 transition-all ${
-                          preferences.theme === value ? "border-blue-500 bg-blue-600" : "border-slate-600 hover:border-slate-500 bg-slate-700/50"
+                          preferences.theme === value ? "border-blue-500 bg-blue-600" : "border hover:border-slate-500 bg-secondary/50"
                         }`}
                       >
-                        <Icon className={`w-5 h-5 ${preferences.theme === value ? "text-white" : "text-slate-300"}`} />
-                        <span className={`text-xs font-medium ${preferences.theme === value ? "text-white" : "text-slate-300"}`}>{label}</span>
+                        <Icon className={`w-5 h-5 ${preferences.theme === value ? "text-foreground" : "text-muted-foreground"}`} />
+                        <span className={`text-xs font-medium ${preferences.theme === value ? "text-foreground" : "text-muted-foreground"}`}>{label}</span>
                       </button>
                     ))}
                   </div>
                 </div>
                 <div>
-                  <Label className="text-slate-300">{t("settings.color_contrast")}</Label>
+                  <Label className="text-muted-foreground">{t("settings.color_contrast")}</Label>
                   <Select value={preferences.contrast} onValueChange={(v) => handlePreferenceChange("contrast", v)}>
-                    <SelectTrigger className="mt-2 bg-slate-700 border-slate-600 text-white"><SelectValue /></SelectTrigger>
+                    <SelectTrigger className="mt-2 bg-secondary border text-foreground"><SelectValue /></SelectTrigger>
                     <SelectContent>
                       <SelectItem value="standard">{t("settings.standard")}</SelectItem>
                       <SelectItem value="enhanced">{t("settings.enhanced")}</SelectItem>
@@ -491,9 +491,9 @@ export default function Settings() {
                   </Select>
                 </div>
                 <div>
-                  <Label className="text-slate-300">{t("settings.font_size")}</Label>
+                  <Label className="text-muted-foreground">{t("settings.font_size")}</Label>
                   <Select value={preferences.fontSize} onValueChange={(v) => handlePreferenceChange("fontSize", v)}>
-                    <SelectTrigger className="mt-2 bg-slate-700 border-slate-600 text-white"><SelectValue /></SelectTrigger>
+                    <SelectTrigger className="mt-2 bg-secondary border text-foreground"><SelectValue /></SelectTrigger>
                     <SelectContent>
                       {FONT_SIZES.map(f => <SelectItem key={f.value} value={f.value}>{f.label}</SelectItem>)}
                     </SelectContent>
@@ -504,37 +504,37 @@ export default function Settings() {
           </AccordionItem>
 
           {/* LANGUAGE & REGION */}
-          <AccordionItem value="language" className="bg-slate-800 rounded-lg border border-slate-700">
+          <AccordionItem value="language" className="bg-card rounded-lg border border">
             <AccordionTrigger className="px-6 py-4 hover:no-underline">
               <div className="flex items-center gap-3">
                 <div className="w-9 h-9 rounded-lg bg-emerald-900/30 flex items-center justify-center">
                   <Globe className="w-4 h-4 text-emerald-400" />
                 </div>
                 <div className="text-left">
-                  <h3 className="font-semibold text-white">{t("settings.language_region")}</h3>
-                  <p className="text-xs text-slate-400">{t("settings.language_region_desc")}</p>
+                  <h3 className="font-semibold text-foreground">{t("settings.language_region")}</h3>
+                  <p className="text-xs text-muted-foreground">{t("settings.language_region_desc")}</p>
                 </div>
               </div>
             </AccordionTrigger>
             <AccordionContent className="px-6 pb-6">
               <div className="space-y-4 pt-2">
                 <div>
-                  <Label className="text-slate-300">{t("settings.display_language")}</Label>
+                  <Label className="text-muted-foreground">{t("settings.display_language")}</Label>
                   <Select value={language} onValueChange={handleLanguageChange}>
-                    <SelectTrigger className="mt-2 bg-slate-700 border-slate-600 text-white"><SelectValue /></SelectTrigger>
+                    <SelectTrigger className="mt-2 bg-secondary border text-foreground"><SelectValue /></SelectTrigger>
                     <SelectContent>
                       {LANGUAGES.map(lang => <SelectItem key={lang.value} value={lang.value}>{lang.label}</SelectItem>)}
                     </SelectContent>
                   </Select>
                   {updateLanguageMutation.isPending && (
-                    <p className="text-xs text-slate-400 mt-2">{t("settings.saving")}</p>
+                    <p className="text-xs text-muted-foreground mt-2">{t("settings.saving")}</p>
                   )}
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <Label className="text-slate-300">{t("settings.date_format")}</Label>
+                    <Label className="text-muted-foreground">{t("settings.date_format")}</Label>
                     <Select value={preferences.dateFormat} onValueChange={(v) => handlePreferenceChange("dateFormat", v)}>
-                      <SelectTrigger className="mt-2 bg-slate-700 border-slate-600 text-white"><SelectValue /></SelectTrigger>
+                      <SelectTrigger className="mt-2 bg-secondary border text-foreground"><SelectValue /></SelectTrigger>
                       <SelectContent>
                         <SelectItem value="MM/DD/YYYY">MM/DD/YYYY</SelectItem>
                         <SelectItem value="DD/MM/YYYY">DD/MM/YYYY</SelectItem>
@@ -543,9 +543,9 @@ export default function Settings() {
                     </Select>
                   </div>
                   <div>
-                    <Label className="text-slate-300">{t("settings.time_format")}</Label>
+                    <Label className="text-muted-foreground">{t("settings.time_format")}</Label>
                     <Select value={preferences.timeFormat} onValueChange={(v) => handlePreferenceChange("timeFormat", v)}>
-                      <SelectTrigger className="mt-2 bg-slate-700 border-slate-600 text-white"><SelectValue /></SelectTrigger>
+                      <SelectTrigger className="mt-2 bg-secondary border text-foreground"><SelectValue /></SelectTrigger>
                       <SelectContent>
                         <SelectItem value="12h">{t("settings.hour_12")}</SelectItem>
                         <SelectItem value="24h">{t("settings.hour_24")}</SelectItem>
@@ -554,9 +554,9 @@ export default function Settings() {
                   </div>
                 </div>
                 <div>
-                  <Label className="text-slate-300">{t("settings.timezone")}</Label>
+                  <Label className="text-muted-foreground">{t("settings.timezone")}</Label>
                   <Select value={preferences.timezone} onValueChange={(v) => handlePreferenceChange("timezone", v)}>
-                    <SelectTrigger className="mt-2 bg-slate-700 border-slate-600 text-white"><SelectValue /></SelectTrigger>
+                    <SelectTrigger className="mt-2 bg-secondary border text-foreground"><SelectValue /></SelectTrigger>
                     <SelectContent>
                       {TIMEZONES.map(tz => <SelectItem key={tz} value={tz}>{tz}</SelectItem>)}
                     </SelectContent>
@@ -567,15 +567,15 @@ export default function Settings() {
           </AccordionItem>
 
           {/* NOTIFICATIONS */}
-          <AccordionItem value="notifications" className="bg-slate-800 rounded-lg border border-slate-700">
+          <AccordionItem value="notifications" className="bg-card rounded-lg border border">
             <AccordionTrigger className="px-6 py-4 hover:no-underline">
               <div className="flex items-center gap-3">
                 <div className="w-9 h-9 rounded-lg bg-amber-900/30 flex items-center justify-center">
                   <Bell className="w-4 h-4 text-amber-400" />
                 </div>
                 <div className="text-left">
-                  <h3 className="font-semibold text-white">{t("settings.notifications")}</h3>
-                  <p className="text-xs text-slate-400">{t("settings.notifications_desc")}</p>
+                  <h3 className="font-semibold text-foreground">{t("settings.notifications")}</h3>
+                  <p className="text-xs text-muted-foreground">{t("settings.notifications_desc")}</p>
                 </div>
               </div>
             </AccordionTrigger>
@@ -586,10 +586,10 @@ export default function Settings() {
                   { key: "emailNotifications", labelKey: "settings.email_notifications", descKey: "settings.email_notifications_desc" },
                   { key: "soundAlerts", labelKey: "settings.sound_alerts", descKey: "settings.sound_alerts_desc" },
                 ].map(({ key, labelKey, descKey }) => (
-                  <div key={key} className="flex items-center justify-between p-3 rounded-lg hover:bg-slate-700/50">
+                  <div key={key} className="flex items-center justify-between p-3 rounded-lg hover:bg-secondary/50">
                     <div>
-                      <p className="font-medium text-sm text-slate-200">{t(labelKey)}</p>
-                      <p className="text-xs text-slate-400">{t(descKey)}</p>
+                      <p className="font-medium text-sm text-foreground">{t(labelKey)}</p>
+                      <p className="text-xs text-muted-foreground">{t(descKey)}</p>
                     </div>
                     <Switch checked={preferences[key]} onCheckedChange={(v) => handlePreferenceChange(key, v)} />
                   </div>
@@ -605,15 +605,15 @@ export default function Settings() {
           </AccordionItem>
 
           {/* OFFLINE & SYNC */}
-          <AccordionItem value="offline" className="bg-slate-800 rounded-lg border border-slate-700">
+          <AccordionItem value="offline" className="bg-card rounded-lg border border">
             <AccordionTrigger className="px-6 py-4 hover:no-underline">
               <div className="flex items-center gap-3">
                 <div className="w-9 h-9 rounded-lg bg-indigo-900/30 flex items-center justify-center">
                   <Wifi className="w-4 h-4 text-indigo-400" />
                 </div>
                 <div className="text-left">
-                  <h3 className="font-semibold text-white">{t("settings.offline_sync")}</h3>
-                  <p className="text-xs text-slate-400">{t("settings.offline_sync_desc")}</p>
+                  <h3 className="font-semibold text-foreground">{t("settings.offline_sync")}</h3>
+                  <p className="text-xs text-muted-foreground">{t("settings.offline_sync_desc")}</p>
                 </div>
               </div>
             </AccordionTrigger>
@@ -621,26 +621,26 @@ export default function Settings() {
               <div className="space-y-6 pt-2">
                 {/* Offline Mode */}
                 <div>
-                  <h4 className="text-sm font-semibold text-slate-200 mb-3">{t("settings.offline_mode")}</h4>
+                  <h4 className="text-sm font-semibold text-foreground mb-3">{t("settings.offline_mode")}</h4>
                   <div className="space-y-3">
-                    <div className="flex items-center justify-between p-3 rounded-lg hover:bg-slate-700/50">
+                    <div className="flex items-center justify-between p-3 rounded-lg hover:bg-secondary/50">
                       <div>
-                        <p className="font-medium text-sm text-slate-200">{t("settings.auto_offline")}</p>
-                        <p className="text-xs text-slate-400">{t("settings.auto_offline_desc")}</p>
+                        <p className="font-medium text-sm text-foreground">{t("settings.auto_offline")}</p>
+                        <p className="text-xs text-muted-foreground">{t("settings.auto_offline_desc")}</p>
                       </div>
                       <Switch checked={preferences.autoOffline} onCheckedChange={(v) => handlePreferenceChange("autoOffline", v)} />
                     </div>
-                    <div className="flex items-center justify-between p-3 rounded-lg hover:bg-slate-700/50">
+                    <div className="flex items-center justify-between p-3 rounded-lg hover:bg-secondary/50">
                       <div>
-                        <p className="font-medium text-sm text-slate-200">{t("settings.lite_mode")}</p>
-                        <p className="text-xs text-slate-400">{t("settings.lite_mode_desc")}</p>
+                        <p className="font-medium text-sm text-foreground">{t("settings.lite_mode")}</p>
+                        <p className="text-xs text-muted-foreground">{t("settings.lite_mode_desc")}</p>
                       </div>
                       <Switch checked={preferences.liteMode} onCheckedChange={(v) => handlePreferenceChange("liteMode", v)} />
                     </div>
                     <div>
-                      <Label className="text-slate-300">{t("settings.storage_limit")}</Label>
+                      <Label className="text-muted-foreground">{t("settings.storage_limit")}</Label>
                       <Select value={preferences.storageLimit} onValueChange={(v) => handlePreferenceChange("storageLimit", v)}>
-                        <SelectTrigger className="mt-2 bg-slate-700 border-slate-600 text-white"><SelectValue /></SelectTrigger>
+                        <SelectTrigger className="mt-2 bg-secondary border text-foreground"><SelectValue /></SelectTrigger>
                         <SelectContent>
                           <SelectItem value="100MB">100 MB</SelectItem>
                           <SelectItem value="500MB">500 MB</SelectItem>
@@ -651,8 +651,8 @@ export default function Settings() {
                     </div>
                     <div>
                       <div className="flex items-center justify-between mb-2">
-                        <Label className="text-slate-300">{t("settings.storage_used")}</Label>
-                        <span className="text-xs text-slate-400">{storageUsed} MB</span>
+                        <Label className="text-muted-foreground">{t("settings.storage_used")}</Label>
+                        <span className="text-xs text-muted-foreground">{storageUsed} MB</span>
                       </div>
                       {(() => {
                         const parsedLimit = preferences.storageLimit === '1GB' ? 1024
@@ -661,7 +661,7 @@ export default function Settings() {
                           : 500;
                         const storagePercent = parsedLimit === Infinity ? 0
                           : Math.min((storageUsed / parsedLimit) * 100, 100);
-                        return <Progress value={storagePercent} className="h-2 bg-slate-700" />;
+                        return <Progress value={storagePercent} className="h-2 bg-secondary" />;
                       })()}
                     </div>
                   </div>
@@ -671,19 +671,19 @@ export default function Settings() {
 
                 {/* Sync Settings */}
                 <div>
-                  <h4 className="text-sm font-semibold text-slate-200 mb-3">{t("settings.sync_settings")}</h4>
+                  <h4 className="text-sm font-semibold text-foreground mb-3">{t("settings.sync_settings")}</h4>
                   <div className="space-y-3">
-                    <div className="flex items-center justify-between p-3 rounded-lg hover:bg-slate-700/50">
+                    <div className="flex items-center justify-between p-3 rounded-lg hover:bg-secondary/50">
                       <div>
-                        <p className="font-medium text-sm text-slate-200">{t("settings.auto_sync")}</p>
-                        <p className="text-xs text-slate-400">{t("settings.auto_sync_desc")}</p>
+                        <p className="font-medium text-sm text-foreground">{t("settings.auto_sync")}</p>
+                        <p className="text-xs text-muted-foreground">{t("settings.auto_sync_desc")}</p>
                       </div>
                       <Switch checked={preferences.autoSync} onCheckedChange={(v) => handlePreferenceChange("autoSync", v)} />
                     </div>
                     <div>
-                      <Label className="text-slate-300">{t("settings.sync_frequency")}</Label>
+                      <Label className="text-muted-foreground">{t("settings.sync_frequency")}</Label>
                       <Select value={preferences.syncFrequency} onValueChange={(v) => handlePreferenceChange("syncFrequency", v)}>
-                        <SelectTrigger className="mt-2 bg-slate-700 border-slate-600 text-white"><SelectValue /></SelectTrigger>
+                        <SelectTrigger className="mt-2 bg-secondary border text-foreground"><SelectValue /></SelectTrigger>
                         <SelectContent>
                           <SelectItem value="immediate">{t("settings.immediate")}</SelectItem>
                           <SelectItem value="5min">{t("settings.every_5_min")}</SelectItem>
@@ -692,17 +692,17 @@ export default function Settings() {
                         </SelectContent>
                       </Select>
                     </div>
-                    <div className="flex items-center justify-between p-3 rounded-lg hover:bg-slate-700/50">
+                    <div className="flex items-center justify-between p-3 rounded-lg hover:bg-secondary/50">
                       <div>
-                        <p className="font-medium text-sm text-slate-200">{t("settings.sync_cellular")}</p>
-                        <p className="text-xs text-slate-400">{t("settings.sync_cellular_desc")}</p>
+                        <p className="font-medium text-sm text-foreground">{t("settings.sync_cellular")}</p>
+                        <p className="text-xs text-muted-foreground">{t("settings.sync_cellular_desc")}</p>
                       </div>
                       <Switch checked={preferences.syncOverCellular} onCheckedChange={(v) => handlePreferenceChange("syncOverCellular", v)} />
                     </div>
-                    <div className="flex items-center justify-between p-3 bg-slate-700/50 rounded-lg">
+                    <div className="flex items-center justify-between p-3 bg-secondary/50 rounded-lg">
                       <div>
-                        <p className="font-medium text-sm text-slate-200">{t("settings.pending_changes")}</p>
-                        <p className="text-xs text-slate-400">{t("settings.pending_changes_desc")}</p>
+                        <p className="font-medium text-sm text-foreground">{t("settings.pending_changes")}</p>
+                        <p className="text-xs text-muted-foreground">{t("settings.pending_changes_desc")}</p>
                       </div>
                       <Badge variant="outline">{pendingChanges}</Badge>
                     </div>
@@ -710,9 +710,9 @@ export default function Settings() {
                       <RefreshCw className="w-4 h-4 mr-2" /> {t("settings.sync_now")}
                     </Button>
                     <div>
-                      <Label className="text-slate-300">{t("settings.conflict_resolution")}</Label>
+                      <Label className="text-muted-foreground">{t("settings.conflict_resolution")}</Label>
                       <Select value={preferences.conflictResolution} onValueChange={(v) => handlePreferenceChange("conflictResolution", v)}>
-                        <SelectTrigger className="mt-2 bg-slate-700 border-slate-600 text-white"><SelectValue /></SelectTrigger>
+                        <SelectTrigger className="mt-2 bg-secondary border text-foreground"><SelectValue /></SelectTrigger>
                         <SelectContent>
                           <SelectItem value="manual">{t("settings.manual_review")}</SelectItem>
                           <SelectItem value="server">{t("settings.server_wins")}</SelectItem>
@@ -727,15 +727,15 @@ export default function Settings() {
           </AccordionItem>
 
           {/* ACCESSIBILITY */}
-          <AccordionItem value="accessibility" className="bg-slate-800 rounded-lg border border-slate-700">
+          <AccordionItem value="accessibility" className="bg-card rounded-lg border border">
             <AccordionTrigger className="px-6 py-4 hover:no-underline">
               <div className="flex items-center gap-3">
                 <div className="w-9 h-9 rounded-lg bg-pink-900/30 flex items-center justify-center">
                   <Accessibility className="w-4 h-4 text-pink-400" />
                 </div>
                 <div className="text-left">
-                  <h3 className="font-semibold text-white">{t("settings.accessibility")}</h3>
-                  <p className="text-xs text-slate-400">{t("settings.accessibility_desc")}</p>
+                  <h3 className="font-semibold text-foreground">{t("settings.accessibility")}</h3>
+                  <p className="text-xs text-muted-foreground">{t("settings.accessibility_desc")}</p>
                 </div>
               </div>
             </AccordionTrigger>
@@ -746,18 +746,18 @@ export default function Settings() {
                   { key: "reduceMotion", labelKey: "settings.reduce_motion", descKey: "settings.reduce_motion_desc" },
                   { key: "keyboardHints", labelKey: "settings.keyboard_hints", descKey: "settings.keyboard_hints_desc" },
                 ].map(({ key, labelKey, descKey }) => (
-                  <div key={key} className="flex items-center justify-between p-3 rounded-lg hover:bg-slate-700/50">
+                  <div key={key} className="flex items-center justify-between p-3 rounded-lg hover:bg-secondary/50">
                     <div>
-                      <p className="font-medium text-sm text-slate-200">{t(labelKey)}</p>
-                      <p className="text-xs text-slate-400">{t(descKey)}</p>
+                      <p className="font-medium text-sm text-foreground">{t(labelKey)}</p>
+                      <p className="text-xs text-muted-foreground">{t(descKey)}</p>
                     </div>
                     <Switch checked={preferences[key]} onCheckedChange={(v) => handlePreferenceChange(key, v)} />
                   </div>
                 ))}
                 <div>
-                  <Label className="text-slate-300">{t("settings.focus_indicators")}</Label>
+                  <Label className="text-muted-foreground">{t("settings.focus_indicators")}</Label>
                   <Select value={preferences.focusIndicators} onValueChange={(v) => handlePreferenceChange("focusIndicators", v)}>
-                    <SelectTrigger className="mt-2 bg-slate-700 border-slate-600 text-white"><SelectValue /></SelectTrigger>
+                    <SelectTrigger className="mt-2 bg-secondary border text-foreground"><SelectValue /></SelectTrigger>
                     <SelectContent>
                       <SelectItem value="standard">{t("settings.standard")}</SelectItem>
                       <SelectItem value="enhanced">{t("settings.enhanced")}</SelectItem>
@@ -765,9 +765,9 @@ export default function Settings() {
                   </Select>
                 </div>
                 <div>
-                  <Label className="text-slate-300">{t("settings.color_blind_mode")}</Label>
+                  <Label className="text-muted-foreground">{t("settings.color_blind_mode")}</Label>
                   <Select value={preferences.colorBlindMode} onValueChange={(v) => handlePreferenceChange("colorBlindMode", v)}>
-                    <SelectTrigger className="mt-2 bg-slate-700 border-slate-600 text-white"><SelectValue /></SelectTrigger>
+                    <SelectTrigger className="mt-2 bg-secondary border text-foreground"><SelectValue /></SelectTrigger>
                     <SelectContent>
                       <SelectItem value="none">{t("settings.none")}</SelectItem>
                       <SelectItem value="protanopia">{t("settings.protanopia")}</SelectItem>
@@ -781,24 +781,24 @@ export default function Settings() {
           </AccordionItem>
 
           {/* PRIVACY & DATA */}
-          <AccordionItem value="privacy" className="bg-slate-800 rounded-lg border border-slate-700">
+          <AccordionItem value="privacy" className="bg-card rounded-lg border border">
             <AccordionTrigger className="px-6 py-4 hover:no-underline">
               <div className="flex items-center gap-3">
                 <div className="w-9 h-9 rounded-lg bg-red-900/30 flex items-center justify-center">
                   <Lock className="w-4 h-4 text-red-400" />
                 </div>
                 <div className="text-left">
-                  <h3 className="font-semibold text-white">{t("settings.privacy")}</h3>
-                  <p className="text-xs text-slate-400">{t("settings.privacy_desc")}</p>
+                  <h3 className="font-semibold text-foreground">{t("settings.privacy")}</h3>
+                  <p className="text-xs text-muted-foreground">{t("settings.privacy_desc")}</p>
                 </div>
               </div>
             </AccordionTrigger>
             <AccordionContent className="px-6 pb-6">
               <div className="space-y-4 pt-2">
-                <div className="flex items-center justify-between p-3 rounded-lg hover:bg-slate-700/50">
+                <div className="flex items-center justify-between p-3 rounded-lg hover:bg-secondary/50">
                   <div>
-                    <p className="font-medium text-sm text-slate-200">{t("settings.analytics_optin")}</p>
-                    <p className="text-xs text-slate-400">{t("settings.analytics_optin_desc")}</p>
+                    <p className="font-medium text-sm text-foreground">{t("settings.analytics_optin")}</p>
+                    <p className="text-xs text-muted-foreground">{t("settings.analytics_optin_desc")}</p>
                   </div>
                   <Switch checked={preferences.analyticsOptIn} onCheckedChange={(v) => handlePreferenceChange("analyticsOptIn", v)} />
                 </div>
@@ -819,45 +819,45 @@ export default function Settings() {
           </AccordionItem>
 
           {/* ABOUT & HELP */}
-          <AccordionItem value="about" className="bg-slate-800 rounded-lg border border-slate-700">
+          <AccordionItem value="about" className="bg-card rounded-lg border border">
             <AccordionTrigger className="px-6 py-4 hover:no-underline">
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-lg bg-slate-700/50 flex items-center justify-center">
-                  <Info className="w-4 h-4 text-slate-400" />
+                <div className="w-9 h-9 rounded-lg bg-secondary/50 flex items-center justify-center">
+                  <Info className="w-4 h-4 text-muted-foreground" />
                 </div>
                 <div className="text-left">
-                  <h3 className="font-semibold text-white">{t("settings.about")}</h3>
-                  <p className="text-xs text-slate-400">{t("settings.about_desc")}</p>
+                  <h3 className="font-semibold text-foreground">{t("settings.about")}</h3>
+                  <p className="text-xs text-muted-foreground">{t("settings.about_desc")}</p>
                 </div>
               </div>
             </AccordionTrigger>
             <AccordionContent className="px-6 pb-6">
               <div className="space-y-4 pt-2">
-                <div className="p-4 bg-slate-700 rounded-lg space-y-2 text-sm">
+                <div className="p-4 bg-secondary rounded-lg space-y-2 text-sm">
                   <div className="flex justify-between">
-                    <span className="text-slate-400">{t("settings.version")}</span>
-                    <span className="font-medium text-slate-200">1.0.0</span>
+                    <span className="text-muted-foreground">{t("settings.version")}</span>
+                    <span className="font-medium text-foreground">1.0.0</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-slate-400">{t("settings.build_date")}</span>
-                    <span className="font-medium text-slate-200">2026-02-12</span>
+                    <span className="text-muted-foreground">{t("settings.build_date")}</span>
+                    <span className="font-medium text-foreground">2026-02-12</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-slate-400">{t("settings.platform")}</span>
-                    <span className="font-medium text-slate-200">Vite + React + Vercel</span>
+                    <span className="text-muted-foreground">{t("settings.platform")}</span>
+                    <span className="font-medium text-foreground">Vite + React + Vercel</span>
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <a href="#" className="block p-3 rounded-lg hover:bg-slate-700 text-sm font-medium text-blue-400">
+                  <a href="#" className="block p-3 rounded-lg hover:bg-secondary text-sm font-medium text-blue-400">
                     {t("settings.terms_of_service")} →
                   </a>
-                  <a href="#" className="block p-3 rounded-lg hover:bg-slate-700 text-sm font-medium text-blue-400">
+                  <a href="#" className="block p-3 rounded-lg hover:bg-secondary text-sm font-medium text-blue-400">
                     {t("settings.privacy_policy")} →
                   </a>
-                  <a href="mailto:support@aidbridge.org" className="block p-3 rounded-lg hover:bg-slate-700 text-sm font-medium text-blue-400">
+                  <a href="mailto:support@aidbridge.org" className="block p-3 rounded-lg hover:bg-secondary text-sm font-medium text-blue-400">
                     {t("settings.contact_support")} →
                   </a>
-                  <a href="#" className="block p-3 rounded-lg hover:bg-slate-700 text-sm font-medium text-blue-400">
+                  <a href="#" className="block p-3 rounded-lg hover:bg-secondary text-sm font-medium text-blue-400">
                     {t("settings.report_bug")} →
                   </a>
                 </div>
@@ -869,20 +869,20 @@ export default function Settings() {
 
       {/* Clear Cache AlertDialog */}
       <AlertDialog open={clearCacheDialogOpen} onOpenChange={setClearCacheDialogOpen}>
-        <AlertDialogContent className="bg-slate-800 border-slate-700">
+        <AlertDialogContent className="bg-card border">
           <AlertDialogHeader>
             <AlertDialogTitle className="text-amber-400 flex items-center gap-2">
               <Trash2 className="w-5 h-5" /> Clear Local Cache
             </AlertDialogTitle>
-            <AlertDialogDescription className="text-slate-400">
+            <AlertDialogDescription className="text-muted-foreground">
               This will clear all locally cached data. This cannot be undone and the page will reload.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel className="bg-slate-700 border-slate-600 text-slate-200 hover:bg-slate-600">
+            <AlertDialogCancel className="bg-secondary border text-foreground hover:bg-slate-600">
               {t("common.cancel")}
             </AlertDialogCancel>
-            <AlertDialogAction onClick={confirmClearCache} className="bg-amber-600 hover:bg-amber-700 text-white">
+            <AlertDialogAction onClick={confirmClearCache} className="bg-amber-600 hover:bg-amber-700 text-foreground">
               Confirm Clear
             </AlertDialogAction>
           </AlertDialogFooter>
@@ -891,13 +891,13 @@ export default function Settings() {
 
       {/* Delete Account Dialog */}
       <Dialog open={deleteDialogOpen} onOpenChange={(open) => { setDeleteDialogOpen(open); if (!open) setDeleteConfirmText(""); }}>
-        <DialogContent className="max-w-md bg-slate-800 border-slate-700 text-white">
+        <DialogContent className="max-w-md bg-card border text-foreground">
           <DialogHeader>
             <DialogTitle className="text-red-400 flex items-center gap-2">
               <AlertTriangle className="w-5 h-5" />
               {t("settings.delete_account_title")}
             </DialogTitle>
-            <DialogDescription className="pt-2 text-slate-400">
+            <DialogDescription className="pt-2 text-muted-foreground">
               {t("settings.delete_account_desc")}
             </DialogDescription>
           </DialogHeader>
@@ -908,12 +908,12 @@ export default function Settings() {
                 {t("settings.delete_account_warning")}
               </AlertDescription>
             </Alert>
-            <Label className="text-slate-300 text-sm">Type DELETE to confirm</Label>
+            <Label className="text-muted-foreground text-sm">Type DELETE to confirm</Label>
             <Input
               value={deleteConfirmText}
               onChange={e => setDeleteConfirmText(e.target.value)}
               placeholder="DELETE"
-              className="bg-slate-700 border-red-700 text-white mt-2"
+              className="bg-secondary border-red-700 text-foreground mt-2"
             />
           </div>
           <DialogFooter className="flex gap-2">

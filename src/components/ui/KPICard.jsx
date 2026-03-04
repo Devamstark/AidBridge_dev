@@ -21,22 +21,22 @@ export default function KPICard({ title, value, subtitle, icon: Icon, color = "b
   };
 
   return (
-    <Card className={cn("relative overflow-hidden bg-gradient-to-br text-white", colorMap[color])}>
+    <Card className={cn("relative overflow-hidden bg-gradient-to-br text-foreground", colorMap[color])}>
       <div className="p-5">
         <div className="flex items-start justify-between">
           <div className="space-y-1">
-            <p className="text-sm font-medium text-white/80">{title}</p>
+            <p className="text-sm font-medium text-foreground/80">{title}</p>
             <p className="text-3xl font-bold tracking-tight">{value}</p>
-            {subtitle && <p className="text-xs text-white/70 mt-1">{subtitle}</p>}
+            {subtitle && <p className="text-xs text-foreground/70 mt-1">{subtitle}</p>}
           </div>
           {Icon && (
             <div className={cn("p-2.5 rounded-xl", iconBg[color])}>
-              <Icon className="w-5 h-5 text-white" />
+              <Icon className="w-5 h-5 text-foreground" />
             </div>
           )}
         </div>
         {trend && (
-          <p className="text-xs text-white/80 mt-3 font-medium">{trend}</p>
+          <p className="text-xs text-foreground/80 mt-3 font-medium">{trend}</p>
         )}
       </div>
     </Card>

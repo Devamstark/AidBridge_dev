@@ -60,18 +60,18 @@ export default function Volunteers() {
       } />
 
       <div className="relative mb-6">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-        <Input placeholder="Search volunteers..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-10 bg-slate-800 border-slate-700 text-white" />
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+        <Input placeholder="Search volunteers..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-10 bg-card border text-foreground" />
       </div>
 
       {isLoading ? (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">{[1,2,3].map(i => <Skeleton key={i} className="h-40 bg-slate-800"/>)}</div>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">{[1,2,3].map(i => <Skeleton key={i} className="h-40 bg-card"/>)}</div>
       ) : filtered.length === 0 ? (
         <EmptyState icon={UserCheck} title="No volunteers found" description="Add volunteers to start coordinating." />
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {filtered.map(v => (
-            <Card key={v.id} className="bg-slate-800 border-slate-700 hover:shadow-md transition-shadow">
+            <Card key={v.id} className="bg-card border hover:shadow-md transition-shadow">
               <CardContent className="p-5">
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex items-center gap-3">
@@ -79,19 +79,19 @@ export default function Volunteers() {
                       {v.user?.fullName?.[0] || "V"}
                     </div>
                     <div>
-                      <h3 className="font-semibold text-slate-200 text-sm">{v.user?.fullName || "Volunteer"}</h3>
+                      <h3 className="font-semibold text-foreground text-sm">{v.user?.fullName || "Volunteer"}</h3>
                       <StatusBadge status={v.status} className="mt-1" />
                     </div>
                   </div>
                 </div>
-                <div className="space-y-1.5 text-xs text-slate-400">
+                <div className="space-y-1.5 text-xs text-muted-foreground">
                   {v.user?.phone && <div className="flex items-center gap-2"><Phone className="w-3 h-3" />{v.user.phone}</div>}
                   {v.user?.email && <div className="flex items-center gap-2"><Mail className="w-3 h-3" />{v.user.email}</div>}
                 </div>
                 {v.skills && v.skills.length > 0 && (
                   <div className="flex flex-wrap gap-1.5 mt-3">
                     {v.skills.slice(0, 3).map((skill, idx) => (
-                      <Badge key={idx} variant="secondary" className="text-xs bg-slate-700 text-slate-300 border-slate-600">{skill}</Badge>
+                      <Badge key={idx} variant="secondary" className="text-xs bg-secondary text-muted-foreground border">{skill}</Badge>
                     ))}
                   </div>
                 )}
@@ -128,7 +128,7 @@ export default function Volunteers() {
                     onClick={() => setSelectedSkills(prev => prev.includes(skill) ? prev.filter(s => s !== skill) : [...prev, skill])}
                     className={cn(
                       "px-3 py-1.5 rounded-full text-xs font-medium border transition-all",
-                      selectedSkills.includes(skill) ? "bg-purple-50 text-purple-700 border-purple-200" : "bg-slate-700 text-slate-300 border-slate-600"
+                      selectedSkills.includes(skill) ? "bg-purple-50 text-purple-700 border-purple-200" : "bg-secondary text-muted-foreground border"
                     )}
                   >{skill}</button>
                 ))}

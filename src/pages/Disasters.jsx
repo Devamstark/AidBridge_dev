@@ -146,18 +146,18 @@ export default function Disasters() {
         />
 
         <div className="relative mb-6">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <Input
             placeholder="Search disasters..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="pl-10 bg-slate-800 border-slate-700 text-white placeholder-slate-400"
+            className="pl-10 bg-card border text-foreground placeholder-muted-foreground"
           />
         </div>
 
         {isLoading ? (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {[1, 2, 3].map(i => <Skeleton key={i} className="h-40 bg-slate-800" />)}
+            {[1, 2, 3].map(i => <Skeleton key={i} className="h-40 bg-card" />)}
           </div>
         ) : filtered.length === 0 ? (
           <EmptyState icon={Activity} title="No disasters found" description="Create a new disaster event to get started." />
@@ -176,21 +176,21 @@ export default function Disasters() {
         )}
 
         <Dialog open={open} onOpenChange={setOpen}>
-          <DialogContent className="max-w-lg bg-slate-800 border-slate-700 text-white">
+          <DialogContent className="max-w-lg bg-card border text-foreground">
             <DialogHeader>
-              <DialogTitle className="text-white">New Disaster Event</DialogTitle>
-              <DialogDescription className="text-slate-400">
+              <DialogTitle className="text-foreground">New Disaster Event</DialogTitle>
+              <DialogDescription className="text-muted-foreground">
                 Enter the details of the new disaster event to begin tracking and response efforts.
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-4 mt-2">
               <div>
-                <Label className="text-slate-300">Event Name *</Label>
+                <Label className="text-muted-foreground">Event Name *</Label>
                 <Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="e.g. Hurricane Milton" />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label className="text-slate-300">Disaster Type</Label>
+                  <Label className="text-muted-foreground">Disaster Type</Label>
                   <Select value={form.disasterType} onValueChange={(v) => setForm({ ...form, disasterType: v })}>
                     <SelectTrigger><SelectValue /></SelectTrigger>
                     <SelectContent>
@@ -199,7 +199,7 @@ export default function Disasters() {
                   </Select>
                 </div>
                 <div>
-                  <Label className="text-slate-300">Severity (1-5)</Label>
+                  <Label className="text-muted-foreground">Severity (1-5)</Label>
                   <Select value={String(form.severity)} onValueChange={(v) => setForm({ ...form, severity: parseInt(v) })}>
                     <SelectTrigger><SelectValue /></SelectTrigger>
                     <SelectContent>
@@ -210,24 +210,24 @@ export default function Disasters() {
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label className="text-slate-300">Latitude</Label>
+                  <Label className="text-muted-foreground">Latitude</Label>
                   <Input type="number" step="any" value={form.latitude} onChange={(e) => setForm({ ...form, latitude: parseFloat(e.target.value) || 0 })} placeholder="e.g. 27.95" />
                 </div>
                 <div>
-                  <Label className="text-slate-300">Longitude</Label>
+                  <Label className="text-muted-foreground">Longitude</Label>
                   <Input type="number" step="any" value={form.longitude} onChange={(e) => setForm({ ...form, longitude: parseFloat(e.target.value) || 0 })} placeholder="e.g. -82.45" />
                 </div>
               </div>
               <div>
-                <Label className="text-slate-300">Affected Area</Label>
+                <Label className="text-muted-foreground">Affected Area</Label>
                 <Input value={form.affectedArea} onChange={(e) => setForm({ ...form, affectedArea: e.target.value })} placeholder="City, County, State" />
               </div>
               <div>
-                <Label className="text-slate-300">Estimated People Affected</Label>
+                <Label className="text-muted-foreground">Estimated People Affected</Label>
                 <Input type="number" value={form.estimatedAffected} onChange={(e) => setForm({ ...form, estimatedAffected: parseInt(e.target.value) || 0 })} />
               </div>
               <div>
-                <Label className="text-slate-300">Description</Label>
+                <Label className="text-muted-foreground">Description</Label>
                 <Textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={3} />
               </div>
               <div className="flex justify-end gap-2 pt-2">

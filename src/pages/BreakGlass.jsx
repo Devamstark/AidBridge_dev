@@ -90,9 +90,9 @@ export default function BreakGlass() {
       </Alert>
 
       <div className="grid gap-6 lg:grid-cols-2">
-        <Card className="bg-slate-800 border-2 border-red-900/50">
+        <Card className="bg-card border-2 border-red-900/50">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-lg text-white">
+            <CardTitle className="flex items-center gap-2 text-lg text-foreground">
               <ShieldAlert className="w-5 h-5 text-red-500" />
               Request Emergency Access
             </CardTitle>
@@ -119,30 +119,30 @@ export default function BreakGlass() {
               />
               <p className={cn(
                 "text-xs mt-1",
-                justification.length >= MIN_JUSTIFICATION_LENGTH ? "text-emerald-400" : "text-slate-400"
+                justification.length >= MIN_JUSTIFICATION_LENGTH ? "text-emerald-400" : "text-muted-foreground"
               )}>
                 {justification.length}/{MIN_JUSTIFICATION_LENGTH} characters minimum
               </p>
             </div>
 
             <div className="flex items-center gap-2 p-3 rounded-lg bg-slate-50">
-              <MapPin className="w-4 h-4 text-slate-400" />
-              <span className="text-sm text-slate-600">
+              <MapPin className="w-4 h-4 text-muted-foreground" />
+              <span className="text-sm text-muted-foreground">
                 {gpsStatus === "found" ? `GPS: ${gps.lat.toFixed(4)}, ${gps.lng.toFixed(4)}` :
                   gpsStatus === "failed" ? "GPS unavailable — location will not be recorded" :
                     "Acquiring GPS location..."}
               </span>
-              {gpsStatus === "pending" && <Loader2 className="w-3 h-3 animate-spin text-slate-400" />}
+              {gpsStatus === "pending" && <Loader2 className="w-3 h-3 animate-spin text-muted-foreground" />}
             </div>
 
             <div className="flex items-center gap-2 p-3 rounded-lg bg-slate-50">
-              <Clock className="w-4 h-4 text-slate-400" />
-              <span className="text-sm text-slate-600">Elevated access duration: 4 hours</span>
+              <Clock className="w-4 h-4 text-muted-foreground" />
+              <span className="text-sm text-muted-foreground">Elevated access duration: 4 hours</span>
             </div>
 
             <div className="flex items-center gap-2 p-3 rounded-lg bg-slate-50">
-              <FileText className="w-4 h-4 text-slate-400" />
-              <span className="text-sm text-slate-600">This request will be audited and reviewed</span>
+              <FileText className="w-4 h-4 text-muted-foreground" />
+              <span className="text-sm text-muted-foreground">This request will be audited and reviewed</span>
             </div>
 
             <div className="flex items-center gap-2 p-3 rounded-lg bg-blue-50 border border-blue-200">
@@ -177,28 +177,28 @@ export default function BreakGlass() {
           </CardContent>
         </Card>
 
-        <Card className="bg-slate-800 border-slate-700">
+        <Card className="bg-card border">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-lg text-white">
-              <ShieldCheck className="w-5 h-5 text-slate-400" />
+            <CardTitle className="flex items-center gap-2 text-lg text-foreground">
+              <ShieldCheck className="w-5 h-5 text-muted-foreground" />
               Recent Break-Glass Events
             </CardTitle>
           </CardHeader>
           <CardContent>
             {isLoading ? (
-              <div className="space-y-3">{[1, 2, 3].map(i => <Skeleton key={i} className="h-16 w-full bg-slate-700" />)}</div>
+              <div className="space-y-3">{[1, 2, 3].map(i => <Skeleton key={i} className="h-16 w-full bg-secondary" />)}</div>
             ) : events.length === 0 ? (
               <EmptyState icon={ShieldCheck} title="No events" description="No break-glass events have been recorded." className="py-8" />
             ) : (
               <div className="space-y-3">
                 {events.map(e => (
-                  <div key={e.id} className="p-3 rounded-lg border border-slate-700 bg-slate-700/30">
+                  <div key={e.id} className="p-3 rounded-lg border border bg-secondary/30">
                     <div className="flex items-start justify-between mb-1">
-                      <span className="text-xs font-medium text-slate-200">User {e.userId.slice(0, 8)}</span>
+                      <span className="text-xs font-medium text-foreground">User {e.userId.slice(0, 8)}</span>
                       <StatusBadge status={e.used ? "used" : "active"} />
                     </div>
-                    <p className="text-xs text-slate-300 mb-2 line-clamp-2">{e.reason}</p>
-                    <div className="flex items-center gap-4 text-xs text-slate-500">
+                    <p className="text-xs text-muted-foreground mb-2 line-clamp-2">{e.reason}</p>
+                    <div className="flex items-center gap-4 text-xs text-muted-foreground">
                       <span className="flex items-center gap-1"><Clock className="w-3 h-3" />{e.createdAt ? format(new Date(e.createdAt), "MMM d, h:mm a") : "—"}</span>
                       <span className="flex items-center gap-1"><Clock className="w-3 h-3" />Expires: {e.expiresAt ? format(new Date(e.expiresAt), "MMM d, h:mm a") : "—"}</span>
                     </div>

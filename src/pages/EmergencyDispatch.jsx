@@ -66,7 +66,7 @@ export default function EmergencyDispatch() {
           <Button
             variant="ghost"
             size="sm"
-            className="text-slate-400 h-8"
+            className="text-muted-foreground h-8"
             onClick={() => queryClient.invalidateQueries()}
           >
             <RefreshCw className="w-4 h-4 mr-1" /> Refresh
@@ -75,35 +75,35 @@ export default function EmergencyDispatch() {
       />
 
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
-        <div className="bg-slate-800 rounded-lg p-3 border border-slate-700">
-          <div className="text-slate-400 text-xs mb-1 flex items-center gap-1"><Activity className="w-3 h-3" /> {t("dispatch.active")}</div>
-          <div className="text-2xl font-bold text-white">{active.length}</div>
+        <div className="bg-card rounded-lg p-3 border border">
+          <div className="text-muted-foreground text-xs mb-1 flex items-center gap-1"><Activity className="w-3 h-3" /> {t("dispatch.active")}</div>
+          <div className="text-2xl font-bold text-foreground">{active.length}</div>
         </div>
-        <div className="bg-slate-800 rounded-lg p-3 border border-slate-700">
-          <div className="text-slate-400 text-xs mb-1 flex items-center gap-1"><Users className="w-3 h-3" /> {t("dispatch.available_volunteers")}</div>
+        <div className="bg-card rounded-lg p-3 border border">
+          <div className="text-muted-foreground text-xs mb-1 flex items-center gap-1"><Users className="w-3 h-3" /> {t("dispatch.available_volunteers")}</div>
           <div className={`text-2xl font-bold ${available.length === 0 ? "text-red-400" : "text-emerald-400"}`}>{available.length}</div>
         </div>
-        <div className={`rounded-lg p-3 border ${critical.length > 0 ? "bg-red-950/60 border-red-700" : "bg-slate-800 border-slate-700"}`}>
-          <div className="text-slate-400 text-xs mb-1 flex items-center gap-1"><AlertTriangle className="w-3 h-3 text-red-400" /> {t("dispatch.critical_p0")}</div>
-          <div className={`text-2xl font-bold ${critical.length > 0 ? "text-red-300" : "text-white"}`}>{critical.length}</div>
+        <div className={`rounded-lg p-3 border ${critical.length > 0 ? "bg-red-950/60 border-red-700" : "bg-card border"}`}>
+          <div className="text-muted-foreground text-xs mb-1 flex items-center gap-1"><AlertTriangle className="w-3 h-3 text-red-400" /> {t("dispatch.critical_p0")}</div>
+          <div className={`text-2xl font-bold ${critical.length > 0 ? "text-red-300" : "text-foreground"}`}>{critical.length}</div>
         </div>
-        <div className="bg-slate-800 rounded-lg p-3 border border-slate-700">
-          <div className="text-slate-400 text-xs mb-1 flex items-center gap-1"><Zap className="w-3 h-3 text-amber-400" /> {t("dispatch.fatigued")}</div>
-          <div className="text-2xl font-bold text-white">0</div>
+        <div className="bg-card rounded-lg p-3 border border">
+          <div className="text-muted-foreground text-xs mb-1 flex items-center gap-1"><Zap className="w-3 h-3 text-amber-400" /> {t("dispatch.fatigued")}</div>
+          <div className="text-2xl font-bold text-foreground">0</div>
         </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <div className="space-y-2">
           <div className="flex items-center justify-between mb-2">
-            <h2 className="text-slate-300 text-sm font-semibold">Incoming Requests</h2>
-            <Badge className="bg-slate-700 text-slate-300">{requests.length} total</Badge>
+            <h2 className="text-muted-foreground text-sm font-semibold">Incoming Requests</h2>
+            <Badge className="bg-secondary text-muted-foreground">{requests.length} total</Badge>
           </div>
           {isLoading ? (
-            <div className="text-slate-500 text-sm text-center py-8">Loading...</div>
+            <div className="text-muted-foreground text-sm text-center py-8">Loading...</div>
           ) : requests.length === 0 ? (
-            <Card className="bg-slate-800 border-slate-700">
-              <CardContent className="text-slate-500 text-sm text-center py-12">
+            <Card className="bg-card border">
+              <CardContent className="text-muted-foreground text-sm text-center py-12">
                 <CheckCircle2 className="w-8 h-8 mx-auto mb-2 opacity-30" />
                 No emergency requests
               </CardContent>
@@ -112,23 +112,23 @@ export default function EmergencyDispatch() {
             requests.map(r => (
               <Card
                 key={r.id}
-                className={`p-4 cursor-pointer hover:bg-slate-700/50 border ${r.priority === "P0" ? "border-red-500 bg-red-950/20" : "border-slate-700 bg-slate-800"}`}
+                className={`p-4 cursor-pointer hover:bg-secondary/50 border ${r.priority === "P0" ? "border-red-500 bg-red-950/20" : "border bg-card"}`}
                 onClick={() => setSelectedRequest(r)}
               >
                 <div className="flex items-start justify-between">
                   <div>
                     <div className="flex items-center gap-2">
-                      <p className="font-medium text-white text-sm">{r.type}</p>
+                      <p className="font-medium text-foreground text-sm">{r.type}</p>
                       {r.isPublic && (
                         <Badge variant="outline" className="text-[10px] h-4 border-blue-500 text-blue-400 bg-blue-500/10">Portal</Badge>
                       )}
                     </div>
-                    <p className="text-xs text-slate-400 mt-1">
+                    <p className="text-xs text-muted-foreground mt-1">
                       {r.isPublic && <span className="text-blue-300 mr-1">{r.fullName || "Public"}:</span>}
                       {r.description?.slice(0, 80) || "No description"}
                     </p>
                     <div className="flex items-center gap-3 mt-2">
-                      <p className="text-[10px] text-slate-500">{r.createdAt ? format(new Date(r.createdAt), "MMM d, h:mm a") : ""}</p>
+                      <p className="text-[10px] text-muted-foreground">{r.createdAt ? format(new Date(r.createdAt), "MMM d, h:mm a") : ""}</p>
                       {r.isPublic && r.phone && <p className="text-[10px] text-blue-400 font-mono">{r.phone}</p>}
                     </div>
                   </div>
@@ -142,26 +142,26 @@ export default function EmergencyDispatch() {
           )}
         </div>
 
-        <div className="bg-slate-800 rounded-lg p-4 border border-slate-700 h-fit sticky top-4">
-          <h2 className="text-slate-300 text-sm font-semibold mb-4">
+        <div className="bg-card rounded-lg p-4 border border h-fit sticky top-4">
+          <h2 className="text-muted-foreground text-sm font-semibold mb-4">
             {selectedRequest ? `Details: ${selectedRequest.type}` : "Select a request to view details"}
           </h2>
           {selectedRequest ? (
             <div className="space-y-3">
-              <div><p className="text-xs text-slate-400">Description</p><p className="text-sm text-white">{selectedRequest.description}</p></div>
-              <div><p className="text-xs text-slate-400">Priority</p><Badge className={selectedRequest.priority === "P0" ? "bg-red-600" : "bg-slate-600"}>{selectedRequest.priority}</Badge></div>
-              <div><p className="text-xs text-slate-400">Status</p><Badge>{selectedRequest.status}</Badge></div>
-              <div><p className="text-xs text-slate-400">Location</p><p className="text-sm text-white">{selectedRequest.address || "No address provided"}</p></div>
+              <div><p className="text-xs text-muted-foreground">Description</p><p className="text-sm text-foreground">{selectedRequest.description}</p></div>
+              <div><p className="text-xs text-muted-foreground">Priority</p><Badge className={selectedRequest.priority === "P0" ? "bg-red-600" : "bg-slate-600"}>{selectedRequest.priority}</Badge></div>
+              <div><p className="text-xs text-muted-foreground">Status</p><Badge>{selectedRequest.status}</Badge></div>
+              <div><p className="text-xs text-muted-foreground">Location</p><p className="text-sm text-foreground">{selectedRequest.address || "No address provided"}</p></div>
 
               {selectedRequest.assignedVolunteers?.length > 0 && (
                 <div className="pt-2">
-                  <p className="text-xs text-slate-400 mb-2">Assigned Personnel</p>
+                  <p className="text-xs text-muted-foreground mb-2">Assigned Personnel</p>
                   <div className="space-y-2">
                     {selectedRequest.assignedVolunteers.map(v => (
-                      <div key={v.id} className="flex items-center justify-between bg-slate-900/50 p-2 rounded border border-slate-700">
+                      <div key={v.id} className="flex items-center justify-between bg-background/50 p-2 rounded border border">
                         <div>
-                          <p className="text-xs font-medium text-white">{v.user?.fullName}</p>
-                          <p className="text-[10px] text-slate-500">{v.user?.phone || "No phone"}</p>
+                          <p className="text-xs font-medium text-foreground">{v.user?.fullName}</p>
+                          <p className="text-[10px] text-muted-foreground">{v.user?.phone || "No phone"}</p>
                         </div>
                         <Badge variant="outline" className="text-[10px] h-4 text-emerald-400 border-emerald-500/30">Active</Badge>
                       </div>
@@ -170,18 +170,18 @@ export default function EmergencyDispatch() {
                 </div>
               )}
 
-              <div className="pt-4 border-t border-slate-700">
-                <p className="text-xs text-slate-400 mb-2">Assign Volunteer</p>
+              <div className="pt-4 border-t border">
+                <p className="text-xs text-muted-foreground mb-2">Assign Volunteer</p>
                 <Select value={selectedVolunteerId} onValueChange={setSelectedVolunteerId}>
-                  <SelectTrigger className="bg-slate-900 border-slate-700 text-slate-200">
+                  <SelectTrigger className="bg-background border text-foreground">
                     <SelectValue placeholder="Select an available volunteer" />
                   </SelectTrigger>
-                  <SelectContent className="bg-slate-900 border-slate-700">
+                  <SelectContent className="bg-background border">
                     {available.length === 0 ? (
                       <SelectItem value="none" disabled>No volunteers available</SelectItem>
                     ) : (
                       available.map(v => (
-                        <SelectItem key={v.id} value={v.id} className="text-slate-200">
+                        <SelectItem key={v.id} value={v.id} className="text-foreground">
                           {v.user?.fullName} {v.currentLat ? `(${v.currentLat.toFixed(2)}, ${v.currentLng.toFixed(2)})` : "(No location)"}
                         </SelectItem>
                       ))
@@ -198,7 +198,7 @@ export default function EmergencyDispatch() {
               </div>
             </div>
           ) : (
-            <div className="text-slate-500 text-sm text-center py-8">Select a request from the list to view details and assign volunteers</div>
+            <div className="text-muted-foreground text-sm text-center py-8">Select a request from the list to view details and assign volunteers</div>
           )}
         </div>
       </div>
