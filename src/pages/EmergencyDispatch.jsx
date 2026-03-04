@@ -165,7 +165,7 @@ export default function EmergencyDispatch() {
                     ) : (
                       available.map(v => (
                         <SelectItem key={v.id} value={v.id} className="text-slate-200">
-                          {v.user?.fullName} ({v.currentLat?.toFixed(2)}, {v.currentLng?.toFixed(2)})
+                          {v.user?.fullName} {v.currentLat ? `(${v.currentLat.toFixed(2)}, ${v.currentLng.toFixed(2)})` : "(No location)"}
                         </SelectItem>
                       ))
                     )}

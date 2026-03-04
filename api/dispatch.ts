@@ -71,22 +71,48 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
             // Check if it's a public request (HelpRequest)
             if (requestIdValue.startsWith('REQ-')) {
+                // 1. Find the public request first to get its details
+                const publicReq = await (prisma as any).publicHelpRequest.findUnique({
+                    where: { requestId: requestIdValue }
+                })
+
+                if (!publicReq) return res.status(404).json({ error: 'Public request not found' })
+
+                // 2. Create an internal EmergencyRequest from the public one
+                // This is necessary because missions are strictly linked to the EmergencyRequest model in the schema
+                const internalRequest = await prisma.emergencyRequest.create({
+                    data: {
+                        type: publicReq.emergencyType,
+                        priority: publicReq.priority,
+                        status: 'IN_PROGRESS',
+                        latitude: publicReq.latitude || 0,
+                        longitude: publicReq.longitude || 0,
+                        address: publicReq.location,
+                        description: `[PORTAL REQUEST ${publicReq.requestId}] ${publicReq.description}`,
+                        details: { portalId: publicReq.id, requestId: publicReq.requestId },
+                        reportedBy: publicReq.fullName,
+                        contactInfo: { phone: publicReq.phone, email: publicReq.email },
+                        disasterId: publicReq.disasterId
+                    }
+                })
+
+                // 3. Update the original portal request status
                 const updatedRequest = await (prisma as any).publicHelpRequest.update({
                     where: { requestId: requestIdValue },
                     data: { assignedTo: body.volunteerId, status: 'ASSIGNED' }
                 })
-                const request = await (prisma as any).publicHelpRequest.findUnique({ where: { requestId: requestIdValue } })
-                if (request) {
-                    await prisma.mission.create({
-                        data: {
-                            emergencyRequestId: request.id,
-                            volunteerId: body.volunteerId,
-                            latitude: request.latitude || 0,
-                            longitude: request.longitude || 0,
-                            status: 'ASSIGNED'
-                        }
-                    })
-                }
+
+                // 4. Create the mission linked to the new internal request
+                await prisma.mission.create({
+                    data: {
+                        emergencyRequestId: internalRequest.id,
+                        volunteerId: body.volunteerId,
+                        latitude: internalRequest.latitude,
+                        longitude: internalRequest.longitude,
+                        status: 'ASSIGNED'
+                    }
+                })
+
                 return res.json({ success: true, request: updatedRequest })
             } else {
                 // Internal request (EmergencyRequest)
@@ -132,8 +158,19 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
             // By default, return both combined
             const [internal, publicReqs] = await Promise.all([
-                prisma.emergencyRequest.findMany({ where, orderBy: { createdAt: 'desc' }, include: { disaster: { select: { name: true } }, assignedVolunteers: { include: { user: { select: { fullName: true, phone: true } } } } } }),
-                (prisma as any).publicHelpRequest.findMany({ where, orderBy: { createdAt: 'desc' }, include: { disaster: { select: { name: true } } } })
+                prisma.emergencyRequest.findMany({
+                    where,
+                    orderBy: { createdAt: 'desc' },
+                    include: {
+                        disaster: { select: { name: true } },
+                        assignedVolunteers: { include: { user: { select: { fullName: true, phone: true } } } }
+                    }
+                }),
+                (prisma as any).publicHelpRequest.findMany({
+                    where: { ...where, status: 'PENDING' }, // Only show pending public requests to avoid duplicates
+                    orderBy: { createdAt: 'desc' },
+                    include: { disaster: { select: { name: true } } }
+                })
             ])
 
             const normalizedPublic = publicReqs.map((r: any) => ({
@@ -143,10 +180,16 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                 isPublic: true
             }))
 
-            const internalWithFlag = internal.map((r: any) => ({
-                ...r,
-                isPublic: false
-            }))
+            const internalWithFlag = internal.map((r: any) => {
+                const details = typeof r.details === 'object' ? r.details : {};
+                const isPortal = !!(details as any)?.portalId;
+                return {
+                    ...r,
+                    isPublic: isPortal,
+                    // Keep the portal requestId for the UI badge if it exists
+                    requestId: (details as any)?.requestId || r.id
+                };
+            })
 
             const all = [...normalizedPublic, ...internalWithFlag].sort((a: any, b: any) =>
                 new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
