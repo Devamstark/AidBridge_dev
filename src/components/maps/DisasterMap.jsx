@@ -5,7 +5,7 @@ import L from "leaflet";
 import { useDisasters } from "@/hooks/useDisasters";
 import { useLocations } from "@/hooks/useLocations";
 import { useVolunteers } from "@/hooks/useVolunteers";
-import { useEmergencyRequests } from "@/hooks/useEmergencyRequests";
+import { useEmergencyRequests } from "@/hooks/useEmergencyDispatch";
 import { Badge } from "@/components/ui/badge";
 import { AlertTriangle, MapPin, Users, HeartPulse } from "lucide-react";
 
