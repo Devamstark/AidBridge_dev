@@ -1,0 +1,518 @@
+generator client {
+  provider = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// USER & AUTHENTICATION
+// ============================================
+
+model User {
+  id              String    @id @default(cuid())
+  email           String    @unique
+  passwordHash    String?
+  fullName        String
+  phone           String?
+  role            String    @default("VOLUNTEER")
+  language        String    @default("en")
+  fontSize        String    @default("MEDIUM")
+  contrast        String    @default("STANDARD")
+  theme           String    @default("DARK")
+  emailVerified   DateTime?
+  image           String?
+  breakGlassAccess Boolean  @default(false)
+  isActive        Boolean   @default(true)
+  lastLoginAt     DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  sessions        Session[]
+  accounts        Account[]
+  volunteerProfile Volunteer?
+  auditLogs       AuditLog[]
+  createdDistributions Distribution[] @relation("DistributionCreator")
+
+  @@index([email])
+  @@index([role])
+}
+
+// ============================================
+// PUBLIC VICTIM PORTAL
+// ============================================
+
+// Public help requests (no login required)
+model PublicHelpRequest {
+  id              String   @id @default(cuid())
+  requestId       String   @unique  // REQ-YYYYMMDD-XXX
+  fullName        String
+  phone           String
+  email           String?
+  location        String
+  latitude        Float?
+  longitude       Float?
+  emergencyType   String   // MEDICAL, RESCUE, SHELTER, FOOD, OTHER
+  priority        String   @default("P2")  // P0, P1, P2, P3
+  description     String   @db.Text
+  peopleCount     Int      @default(1)
+  status          String   @default("PENDING")  // PENDING, ASSIGNED, IN_PROGRESS, RESOLVED
+  assignedTo      String?  // Volunteer ID
+  resolvedAt      DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Relations
+  disaster        Disaster? @relation(fields: [disasterId], references: [id])
+  disasterId      String?
+
+  @@index([requestId])
+  @@index([status])
+  @@index([createdAt])
+}
+
+// Survivor self-registration (no login required)
+model SurvivorRegistration {
+  id              String   @id @default(cuid())
+  caseNumber      String   @unique  // SRV-YYYYMMDD-XXX
+
+  // Personal info
+  firstName       String
+  lastName        String
+  phone           String
+  email           String?
+  dateOfBirth     DateTime?
+  householdSize   Int      @default(1)
+
+  // Consent
+  consentDataSharing Boolean @default(false)
+  consentContact     Boolean @default(true)
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([caseNumber])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([sessionToken])
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// ============================================
+// VOLUNTEER
+// ============================================
+
+model Volunteer {
+  id              String   @id @default(cuid())
+  userId          String   @unique
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  status          String   @default("AVAILABLE")
+  skills          String[]
+  certifications  String[]
+  availability    Json?
+  emergencyContact Json?
+  
+  currentLat      Float?
+  currentLng      Float?
+  lastLocationUpdate DateTime?
+  
+  totalMissions   Int      @default(0)
+  hoursVolunteered Float   @default(0)
+  rating          Float?
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  missions        Mission[]
+  locationHistory VolunteerLocationHistory[]
+  emergencyRequests EmergencyRequest[] @relation("AssignedVolunteers")
+
+  @@index([status])
+  @@index([userId])
+}
+
+model VolunteerLocationHistory {
+  id         String   @id @default(cuid())
+  volunteerId String
+  volunteer  Volunteer @relation(fields: [volunteerId], references: [id], onDelete: Cascade)
+  
+  lat        Float
+  lng        Float
+  timestamp  DateTime @default(now())
+  accuracy   Float?
+
+  @@index([volunteerId])
+  @@index([timestamp])
+}
+
+// ============================================
+// DISASTER
+// ============================================
+
+model Disaster {
+  id            String   @id @default(cuid())
+  name          String
+  disasterType  String
+  severity      Int      @default(1)
+  status        String   @default("ACTIVE")
+  
+  affectedArea  String?
+  latitude      Float?
+  longitude     Float?
+  radius        Float?
+  
+  description   String?  @db.Text
+  startDate     DateTime
+  endDate       DateTime?
+  estimatedAffected Int?
+  
+  resourcesAssigned Json?
+  
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  survivors     Survivor[]
+  locations     Location[]
+  distributions Distribution[]
+  emergencyRequests EmergencyRequest[]
+  inventories   Inventory[]
+
+  @@index([status])
+  @@index([disasterType])
+  @@index([createdAt])
+}
+
+// ============================================
+// SURVIVOR
+// ============================================
+
+model Survivor {
+  id            String   @id @default(cuid())
+  caseNumber    String   @unique
+  firstName     String
+  lastName      String
+  dateOfBirth   DateTime?
+  gender        String?
+  
+  phone         String?
+  email         String?
+  address       String?
+  
+  latitude      Float?
+  longitude     Float?
+  
+  status        String   @default("REGISTERED")
+  medicalNeeds  String[]
+  medications   String[]
+  allergies     String[]
+  specialNeeds  String?
+  
+  familySize    Int      @default(1)
+  dependents    Int      @default(0)
+  familyMembers Json?
+  
+  disasterId    String?
+  disaster      Disaster? @relation(fields: [disasterId], references: [id])
+  locationId    String?
+  location      Location? @relation(fields: [locationId], references: [id])
+  
+  intakeNotes   String?  @db.Text
+  intakeBy      String?
+  intakeDate    DateTime @default(now())
+  
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([caseNumber])
+  @@index([status])
+  @@index([disasterId])
+}
+
+// ============================================
+// LOCATION
+// ============================================
+
+model Location {
+  id                String   @id @default(cuid())
+  name              String
+  locationType      String
+  operationalStatus String   @default("OPEN")
+  
+  address           String?
+  city              String?
+  state             String?
+  zipCode           String?
+  country           String   @default("USA")
+  
+  latitude          Float
+  longitude         Float
+  
+  capacity          Int?
+  currentOccupancy  Int      @default(0)
+  
+  phone             String?
+  email             String?
+  managerName       String?
+  
+  disasterId        String?
+  disaster          Disaster? @relation(fields: [disasterId], references: [id])
+
+  resources         Json?
+
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  survivors         Survivor[]
+  distributions     Distribution[] @relation("DistributionLocation")
+
+  @@index([locationType])
+  @@index([operationalStatus])
+  @@index([disasterId])
+}
+
+// ============================================
+// RESOURCE
+// ============================================
+
+model Resource {
+  id            String   @id @default(cuid())
+  name          String
+  category      String
+  subcategory   String?
+  description   String?  @db.Text
+  
+  unitType      String   @default("each")
+  unitWeight    Float?
+  
+  sku           String?  @unique
+  barcode       String?
+  
+  storageTemp   String?
+  hazardous     Boolean  @default(false)
+  perishable    Boolean  @default(false)
+  shelfLifeDays Int?
+  
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  distributions DistributionItem[]
+  inventories   Inventory[]
+
+  @@index([category])
+  @@index([sku])
+}
+
+// ============================================
+// DISTRIBUTION
+// ============================================
+
+model Distribution {
+  id            String   @id @default(cuid())
+  distributionType String
+
+  quantity      Int
+  quantityDistributed Int @default(0)
+
+  disasterId    String?
+  disaster      Disaster? @relation(fields: [disasterId], references: [id])
+  locationId    String?
+  location      Location? @relation(fields: [locationId], references: [id], onDelete: SetNull, name: "DistributionLocation")
+
+  status        String   @default("PLANNED")
+
+  scheduledDate DateTime?
+  completedDate DateTime?
+
+  notes         String?  @db.Text
+
+  createdById   String
+  createdBy     User     @relation("DistributionCreator", fields: [createdById], references: [id], onDelete: Cascade)
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  items         DistributionItem[]
+
+  @@index([status])
+  @@index([disasterId])
+}
+
+model DistributionItem {
+  id             String     @id @default(cuid())
+  distributionId String
+  distribution   Distribution @relation(fields: [distributionId], references: [id], onDelete: Cascade)
+  resourceId     String
+  resource       Resource   @relation(fields: [resourceId], references: [id])
+  
+  quantity       Int
+  quantityDistributed Int @default(0)
+
+  @@unique([distributionId, resourceId])
+}
+
+// ============================================
+// EMERGENCY REQUEST
+// ============================================
+
+model EmergencyRequest {
+  id            String   @id @default(cuid())
+  type          String
+  priority      String   @default("P2")
+  status        String   @default("PENDING")
+  
+  latitude      Float
+  longitude     Float
+  address       String?
+  
+  description   String   @db.Text
+  details       Json?
+  
+  disasterId    String?
+  disaster      Disaster? @relation(fields: [disasterId], references: [id])
+  
+  maxVolunteers Int      @default(5)
+  
+  reportedAt    DateTime @default(now())
+  respondedAt   DateTime?
+  resolvedAt    DateTime?
+  deadline      DateTime?
+  
+  reportedBy    String?
+  contactInfo   Json?
+  
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  assignedVolunteers Volunteer[] @relation("AssignedVolunteers")
+  missions      Mission[]
+
+  @@index([status])
+  @@index([priority])
+  @@index([createdAt])
+}
+
+// ============================================
+// MISSION
+// ============================================
+
+model Mission {
+  id              String   @id @default(cuid())
+  emergencyRequestId String
+  emergencyRequest EmergencyRequest @relation(fields: [emergencyRequestId], references: [id])
+  
+  volunteerId     String?
+  volunteer       Volunteer? @relation(fields: [volunteerId], references: [id], onDelete: SetNull)
+  
+  status          String   @default("ASSIGNED")
+  latitude        Float
+  longitude       Float
+  
+  assignedAt      DateTime @default(now())
+  arrivedAt       DateTime?
+  completedAt     DateTime?
+  
+  notes           String?
+  outcome         String?
+
+  @@index([emergencyRequestId])
+  @@index([volunteerId])
+}
+
+// ============================================
+// INVENTORY
+// ============================================
+
+model Inventory {
+  id            String   @id @default(cuid())
+  disasterId    String?
+  disaster      Disaster? @relation(fields: [disasterId], references: [id])
+  
+  resourceId    String
+  resource      Resource @relation(fields: [resourceId], references: [id])
+  
+  quantity      Int
+  quantityUsed  Int      @default(0)
+  
+  location      String?
+  
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([disasterId])
+  @@index([resourceId])
+}
+
+// ============================================
+// AUDIT LOG
+// ============================================
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  
+  action    String
+  entity    String
+  entityId  String?
+  details   Json?
+  
+  ipAddress String?
+  userAgent String?
+  
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([action])
+  @@index([createdAt])
+}
+
+// ============================================
+// BREAK GLASS EVENT
+// ============================================
+
+model BreakGlassEvent {
+  id        String   @id @default(cuid())
+  userId    String
+  reason    String   @db.Text
+  grantedAt DateTime @default(now())
+  expiresAt DateTime
+  used      Boolean  @default(false)
+  
+  @@index([userId])
+  @@index([expiresAt])
+}

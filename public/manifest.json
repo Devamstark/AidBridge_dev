@@ -1,0 +1,16 @@
+{
+  "name": "AidBridge",
+  "short_name": "AidBridge",
+  "description": "Disaster Relief Coordination Platform",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0d1527",
+  "theme_color": "#D72836",
+  "icons": [
+    {
+      "src": "https://base44.com/logo_v2.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}
