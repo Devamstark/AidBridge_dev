@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "../utils";
 import { apiClient } from "@/api/client";
@@ -15,13 +15,16 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { TableCell, TableRow } from "@/components/ui/table";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Users, Search, UserPlus, Phone } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import { Users, Search, UserPlus, Phone, Mail, Calendar, Home, CheckCircle2, XCircle, Info, HelpCircle } from "lucide-react";
 import { format } from "date-fns";
 
 export default function Survivors() {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [selectedSurvivor, setSelectedSurvivor] = useState(null);
+  const [updating, setUpdating] = useState(false);
+  const queryClient = useQueryClient();
 
   const { data: survivors = [], isLoading } = useQuery({
     queryKey: ["survivors"],
@@ -43,6 +46,19 @@ export default function Survivors() {
 
   const handleRefresh = async () => {
     window.location.reload();
+  };
+
+  const handleUpdateStatus = async (id, newStatus) => {
+    setUpdating(true);
+    try {
+      await apiClient.put(`/survivors/${id}`, { status: newStatus });
+      queryClient.invalidateQueries(["survivors"]);
+      setSelectedSurvivor(null);
+    } catch (err) {
+      console.error("Failed to update survivor status:", err);
+    } finally {
+      setUpdating(false);
+    }
   };
 
   const filtered = survivors.filter(s => {
@@ -142,6 +158,114 @@ export default function Survivors() {
             )}
           />
         )}
+
+        {/* Survivor Details Modal */}
+        <Dialog open={!!selectedSurvivor} onOpenChange={(open) => !open && setSelectedSurvivor(null)}>
+          <DialogContent className="bg-slate-900 border-slate-700 text-slate-100 max-w-2xl">
+            <DialogHeader>
+              <div className="flex items-center justify-between mb-2">
+                <DialogTitle className="text-xl font-bold flex items-center gap-2">
+                  <Users className="w-5 h-5 text-blue-400" />
+                  Survivor Details
+                </DialogTitle>
+                {selectedSurvivor && <StatusBadge status={selectedSurvivor.status} />}
+              </div>
+              <DialogDescription className="text-slate-400">
+                Case Number: <span className="font-mono text-blue-300">{selectedSurvivor?.caseNumber}</span>
+              </DialogDescription>
+            </DialogHeader>
+
+            {selectedSurvivor && (
+              <div className="grid gap-6 py-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-4">
+                    <div>
+                      <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Full Name</label>
+                      <p className="text-lg font-semibold text-slate-200">{selectedSurvivor.firstName} {selectedSurvivor.lastName}</p>
+                    </div>
+                    <div>
+                      <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Contact Information</label>
+                      <div className="space-y-2 mt-1">
+                        <p className="flex items-center gap-2 text-sm text-slate-300">
+                          <Phone className="w-4 h-4 text-blue-400" />
+                          {selectedSurvivor.phone || "No phone provided"}
+                        </p>
+                        <p className="flex items-center gap-2 text-sm text-slate-300">
+                          <Mail className="w-4 h-4 text-blue-400" />
+                          {selectedSurvivor.email || "No email provided"}
+                        </p>
+                      </div>
+                    </div>
+                    <div>
+                      <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Household Size</label>
+                      <p className="text-sm text-slate-300 mt-1 flex items-center gap-2">
+                        <Home className="w-4 h-4 text-emerald-400" />
+                        {selectedSurvivor.householdSize || 1} Person(s)
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="space-y-4 bg-slate-800/50 p-4 rounded-lg border border-slate-700/50">
+                    <div>
+                      <label className="text-xs font-bold text-amber-500 uppercase tracking-wider flex items-center gap-1">
+                        <Info className="w-3 h-3" />
+                        Intake Notes
+                      </label>
+                      <p className="text-sm text-slate-300 mt-2 whitespace-pre-wrap leading-relaxed">
+                        {selectedSurvivor.intakeNotes || "No notes available for this case."}
+                      </p>
+                    </div>
+                    {selectedSurvivor.disasterId && (
+                      <div>
+                        <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Linked Disaster</label>
+                        <p className="text-sm text-slate-300 mt-1">{disasterMap[selectedSurvivor.disasterId]}</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {selectedSurvivor.status === "PENDING_REVIEW" ? (
+                  <div className="bg-amber-900/20 border border-amber-900/50 rounded-lg p-4 mt-2">
+                    <p className="text-sm text-amber-200 mb-4 flex items-center gap-2 font-medium">
+                      <HelpCircle className="w-4 h-4" />
+                      This registration was submitted via the web portal and is awaiting review.
+                    </p>
+                    <div className="flex gap-3">
+                      <Button
+                        onClick={() => handleUpdateStatus(selectedSurvivor.id, "REGISTERED")}
+                        disabled={updating}
+                        className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold"
+                      >
+                        <CheckCircle2 className="w-4 h-4 mr-2" />
+                        Approve & Register
+                      </Button>
+                      <Button
+                        variant="destructive"
+                        onClick={() => handleUpdateStatus(selectedSurvivor.id, "ARCHIVED")}
+                        disabled={updating}
+                        className="flex-1 font-bold"
+                      >
+                        <XCircle className="w-4 h-4 mr-2" />
+                        Reject Case
+                      </Button>
+                    </div>
+                  </div>
+                ) : (
+                  <DialogFooter className="border-t border-slate-800 pt-4">
+                    <div className="flex items-center gap-2 w-full">
+                      <p className="text-xs text-slate-500 flex-1 italic">
+                        Registered on {format(new Date(selectedSurvivor.createdAt), "PPP")}
+                      </p>
+                      <Button variant="outline" className="border-slate-700 hover:bg-slate-800" onClick={() => setSelectedSurvivor(null)}>
+                        Close
+                      </Button>
+                    </div>
+                  </DialogFooter>
+                )}
+              </div>
+            )}
+          </DialogContent>
+        </Dialog>
       </div>
     </PullToRefresh>
   );
