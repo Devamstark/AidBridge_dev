@@ -15,10 +15,12 @@ export default function LoginPage() {
   const [password, setPassword] = useState("password");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const hasRedirected = React.useRef(false);
 
   React.useEffect(() => {
-    if (isAuthenticated && !isLoadingAuth) {
-      navigate("/");
+    if (isAuthenticated && !isLoadingAuth && !hasRedirected.current) {
+      hasRedirected.current = true;
+      navigate("/", { replace: true });
     }
   }, [isAuthenticated, isLoadingAuth, navigate]);
 

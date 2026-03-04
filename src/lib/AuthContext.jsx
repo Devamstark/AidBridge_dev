@@ -57,17 +57,17 @@ export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [isLoadingAuth, setIsLoadingAuth] = useState(true)
   const [authError, setAuthError] = useState(null)
+  const hasCheckedAuth = React.useRef(false)
 
-  useEffect(() => {
-    checkAuth()
-  }, [])
+  const checkAuth = React.useCallback(async () => {
+    if (hasCheckedAuth.current) return
+    hasCheckedAuth.current = true
 
-  const checkAuth = async () => {
     try {
       setIsLoadingAuth(true)
       const storedAuth = sessionStorage.getItem(STORAGE_KEY)
       const storedUser = sessionStorage.getItem(USER_KEY)
-      
+
       if (storedAuth === 'true' && storedUser) {
         const userData = JSON.parse(storedUser)
         setUser(userData)
@@ -83,7 +83,11 @@ export const AuthProvider = ({ children }) => {
     } finally {
       setIsLoadingAuth(false)
     }
-  }
+  }, [])
+
+  useEffect(() => {
+    checkAuth()
+  }, [checkAuth])
 
   const login = async (email, password) => {
     console.log('Login attempt:', email)

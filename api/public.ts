@@ -34,12 +34,28 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         // Help Request
         if (url.includes('/public/help')) {
             if (req.method !== 'POST') return methodNotAllowed(res, ['POST'])
+
+            console.log('Help request body:', req.body)
+
             const body = helpRequestSchema.parse(req.body)
             const dateStr = new Date().toISOString().slice(0, 10).replace(/-/g, '')
             const randomNum = Math.floor(100 + Math.random() * 900)
             const requestId = `REQ-${dateStr}-${randomNum}`
-            const helpRequest = await prisma.publicHelpRequest.create({ data: { ...body, requestId, status: 'PENDING' } })
-            return res.status(201).json({ requestId: helpRequest.requestId, status: helpRequest.status, message: 'Help request submitted successfully. Save your Request ID to track status.', createdAt: helpRequest.createdAt })
+            const helpRequest = await prisma.publicHelpRequest.create({
+                data: {
+                    ...body,
+                    requestId,
+                    status: 'PENDING',
+                    latitude: body.latitude || null,
+                    longitude: body.longitude || null,
+                }
+            })
+            return res.status(201).json({
+                requestId: helpRequest.requestId,
+                status: helpRequest.status,
+                message: 'Help request submitted successfully. Save your Request ID to track status.',
+                createdAt: helpRequest.createdAt
+            })
         }
 
         // Register Survivor
