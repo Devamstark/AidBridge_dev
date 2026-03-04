@@ -69,17 +69,21 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                 return res.status(400).json({ error: 'Request ID is required' })
             }
 
+            // Fetch volunteer details for logging/details
+            const volunteerInfo = await prisma.volunteer.findUnique({
+                where: { id: body.volunteerId },
+                include: { user: { select: { fullName: true, phone: true } } }
+            })
+
             // Check if it's a public request (HelpRequest)
             if (requestIdValue.startsWith('REQ-')) {
-                // 1. Find the public request first to get its details
                 const publicReq = await (prisma as any).publicHelpRequest.findUnique({
                     where: { requestId: requestIdValue }
                 })
 
                 if (!publicReq) return res.status(404).json({ error: 'Public request not found' })
 
-                // 2. Create an internal EmergencyRequest from the public one
-                // This is necessary because missions are strictly linked to the EmergencyRequest model in the schema
+                // Create internal request AND link the volunteer
                 const internalRequest = await prisma.emergencyRequest.create({
                     data: {
                         type: publicReq.emergencyType,
@@ -89,20 +93,26 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                         longitude: publicReq.longitude || 0,
                         address: publicReq.location,
                         description: `[PORTAL REQUEST ${publicReq.requestId}] ${publicReq.description}`,
-                        details: { portalId: publicReq.id, requestId: publicReq.requestId },
+                        details: {
+                            portalId: publicReq.id,
+                            requestId: publicReq.requestId,
+                            assignedVolunteer: volunteerInfo?.user?.fullName,
+                            volunteerPhone: volunteerInfo?.user?.phone
+                        },
                         reportedBy: publicReq.fullName,
                         contactInfo: { phone: publicReq.phone, email: publicReq.email },
-                        disasterId: publicReq.disasterId
+                        disasterId: publicReq.disasterId,
+                        assignedVolunteers: { // Connect the volunteer here
+                            connect: { id: body.volunteerId }
+                        }
                     }
                 })
 
-                // 3. Update the original portal request status
-                const updatedRequest = await (prisma as any).publicHelpRequest.update({
+                await (prisma as any).publicHelpRequest.update({
                     where: { requestId: requestIdValue },
                     data: { assignedTo: body.volunteerId, status: 'ASSIGNED' }
                 })
 
-                // 4. Create the mission linked to the new internal request
                 await prisma.mission.create({
                     data: {
                         emergencyRequestId: internalRequest.id,
@@ -113,7 +123,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                     }
                 })
 
-                return res.json({ success: true, request: updatedRequest })
+                return res.json({ success: true, request: internalRequest })
             } else {
                 // Internal request (EmergencyRequest)
                 const updatedRequest = await prisma.emergencyRequest.update({

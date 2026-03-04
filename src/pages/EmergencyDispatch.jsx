@@ -153,6 +153,23 @@ export default function EmergencyDispatch() {
               <div><p className="text-xs text-slate-400">Status</p><Badge>{selectedRequest.status}</Badge></div>
               <div><p className="text-xs text-slate-400">Location</p><p className="text-sm text-white">{selectedRequest.address || "No address provided"}</p></div>
 
+              {selectedRequest.assignedVolunteers?.length > 0 && (
+                <div className="pt-2">
+                  <p className="text-xs text-slate-400 mb-2">Assigned Personnel</p>
+                  <div className="space-y-2">
+                    {selectedRequest.assignedVolunteers.map(v => (
+                      <div key={v.id} className="flex items-center justify-between bg-slate-900/50 p-2 rounded border border-slate-700">
+                        <div>
+                          <p className="text-xs font-medium text-white">{v.user?.fullName}</p>
+                          <p className="text-[10px] text-slate-500">{v.user?.phone || "No phone"}</p>
+                        </div>
+                        <Badge variant="outline" className="text-[10px] h-4 text-emerald-400 border-emerald-500/30">Active</Badge>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               <div className="pt-4 border-t border-slate-700">
                 <p className="text-xs text-slate-400 mb-2">Assign Volunteer</p>
                 <Select value={selectedVolunteerId} onValueChange={setSelectedVolunteerId}>
