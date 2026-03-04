@@ -61,7 +61,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         }
 
         // Register Survivor
-        if (id === 'register' || url.includes('/public/register')) {
+        if (id === 'register' || id === 'survivor/register' || url.includes('/register')) {
             if (req.method !== 'POST') return methodNotAllowed(res, ['POST'])
             const body = registerSchema.parse(req.body)
             const dateStr = new Date().toISOString().slice(0, 10).replace(/-/g, '')
@@ -91,7 +91,37 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                 include: { disaster: { select: { name: true } } }
             })
             if (helpRequest) {
-                return res.json({ type: 'HELP_REQUEST', requestId: helpRequest.requestId, status: helpRequest.status, emergencyType: helpRequest.emergencyType, createdAt: helpRequest.createdAt, updatedAt: helpRequest.updatedAt, resolvedAt: helpRequest.resolvedAt, location: helpRequest.location, peopleCount: helpRequest.peopleCount, timeline: [{ status: 'PENDING', timestamp: helpRequest.createdAt }, ...(helpRequest.status !== 'PENDING' ? [{ status: 'ASSIGNED', timestamp: helpRequest.updatedAt }] : []), ...(helpRequest.status === 'RESOLVED' ? [{ status: 'RESOLVED', timestamp: helpRequest.resolvedAt }] : [])] })
+                let responder = null
+                if (helpRequest.assignedTo) {
+                    const volunteer = await prisma.volunteer.findUnique({
+                        where: { id: helpRequest.assignedTo },
+                        include: { user: { select: { fullName: true, phone: true } } }
+                    })
+                    if (volunteer) {
+                        responder = {
+                            fullName: volunteer.user.fullName,
+                            phone: volunteer.user.phone
+                        }
+                    }
+                }
+
+                return res.json({
+                    type: 'HELP_REQUEST',
+                    requestId: helpRequest.requestId,
+                    status: helpRequest.status,
+                    emergencyType: helpRequest.emergencyType,
+                    createdAt: helpRequest.createdAt,
+                    updatedAt: helpRequest.updatedAt,
+                    resolvedAt: helpRequest.resolvedAt,
+                    location: helpRequest.location,
+                    peopleCount: helpRequest.peopleCount,
+                    responder,
+                    timeline: [
+                        { status: 'PENDING', timestamp: helpRequest.createdAt },
+                        ...(helpRequest.status !== 'PENDING' ? [{ status: 'ASSIGNED', timestamp: helpRequest.updatedAt }] : []),
+                        ...(helpRequest.status === 'RESOLVED' ? [{ status: 'RESOLVED', timestamp: helpRequest.resolvedAt }] : [])
+                    ]
+                })
             }
 
             // Try to find as Survivor Registration

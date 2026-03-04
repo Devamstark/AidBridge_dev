@@ -44,9 +44,9 @@ export default function TrackRequest() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50 py-8">
       <div className="max-w-3xl mx-auto px-4">
-        <Button 
-          variant="ghost" 
-          onClick={() => navigate('/help')} 
+        <Button
+          variant="ghost"
+          onClick={() => navigate('/help')}
           className="mb-6 text-slate-600 hover:text-slate-900 hover:bg-white/50"
         >
           <ArrowLeft className="w-4 h-4 mr-2" /> Back to Home
@@ -77,9 +77,9 @@ export default function TrackRequest() {
                       className="border-slate-300 focus:border-green-500 focus:ring-green-500 font-mono text-lg"
                       required
                     />
-                    <Button 
-                      type="submit" 
-                      disabled={isLoading} 
+                    <Button
+                      type="submit"
+                      disabled={isLoading}
                       className="bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-semibold px-8"
                     >
                       {isLoading ? 'Searching...' : 'Track'}
@@ -117,6 +117,25 @@ export default function TrackRequest() {
                   <>
                     {/* Request Details */}
                     <div className="grid sm:grid-cols-2 gap-4">
+                      {result.responder && (
+                        <div className="sm:col-span-2 p-4 bg-blue-50 border border-blue-100 rounded-lg flex items-center justify-between">
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center text-white">
+                              <User className="w-5 h-5" />
+                            </div>
+                            <div>
+                              <p className="text-xs text-blue-600 font-bold uppercase tracking-wider">Your Responder</p>
+                              <p className="text-slate-900 font-bold text-lg">{result.responder.fullName}</p>
+                            </div>
+                          </div>
+                          {result.responder.phone && (
+                            <a href={`tel:${result.responder.phone}`} className="flex items-center gap-2 bg-white text-blue-600 px-4 py-2 rounded-lg shadow-sm border border-blue-100 font-bold hover:bg-blue-50 transition-colors">
+                              <Phone className="w-4 h-4" />
+                              {result.responder.phone}
+                            </a>
+                          )}
+                        </div>
+                      )}
                       <div className="p-4 bg-slate-50 rounded-lg">
                         <p className="text-xs text-slate-500 font-medium mb-1">Emergency Type</p>
                         <p className="text-slate-900 font-semibold">{result.emergencyType}</p>
