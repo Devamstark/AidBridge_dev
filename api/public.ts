@@ -112,7 +112,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             })
             if (helpRequest) {
                 let responder = null
-                if (helpRequest.assignedTo) {
+                // Use stored volunteer info first, fallback to lookup
+                if (helpRequest.assignedVolunteerName) {
+                    responder = {
+                        fullName: helpRequest.assignedVolunteerName,
+                        phone: helpRequest.assignedVolunteerPhone
+                    }
+                } else if (helpRequest.assignedTo) {
                     const volunteer = await prisma.volunteer.findUnique({
                         where: { id: helpRequest.assignedTo },
                         include: { user: { select: { fullName: true, phone: true } } }

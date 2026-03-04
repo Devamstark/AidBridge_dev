@@ -88,19 +88,19 @@ export default function EmergencyDispatch() {
       />
 
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
-        <div className="bg-card rounded-lg p-3 border border">
+        <div className="bg-card rounded-lg p-3 border">
           <div className="text-muted-foreground text-xs mb-1 flex items-center gap-1"><Activity className="w-3 h-3" /> {t("dispatch.active")}</div>
           <div className="text-2xl font-bold text-foreground">{active.length}</div>
         </div>
-        <div className="bg-card rounded-lg p-3 border border">
+        <div className="bg-card rounded-lg p-3 border">
           <div className="text-muted-foreground text-xs mb-1 flex items-center gap-1"><Users className="w-3 h-3" /> {t("dispatch.available_volunteers")}</div>
           <div className={`text-2xl font-bold ${available.length === 0 ? "text-red-400" : "text-emerald-400"}`}>{available.length}</div>
         </div>
-        <div className={`rounded-lg p-3 border ${critical.length > 0 ? "bg-red-950/60 border-red-700" : "bg-card border"}`}>
+        <div className={`rounded-lg p-3 border ${critical.length > 0 ? "bg-red-950/60 border-red-700" : "bg-card"}`}>
           <div className="text-muted-foreground text-xs mb-1 flex items-center gap-1"><AlertTriangle className="w-3 h-3 text-red-400" /> {t("dispatch.critical_p0")}</div>
           <div className={`text-2xl font-bold ${critical.length > 0 ? "text-red-300" : "text-foreground"}`}>{critical.length}</div>
         </div>
-        <div className="bg-card rounded-lg p-3 border border">
+        <div className="bg-card rounded-lg p-3 border">
           <div className="text-muted-foreground text-xs mb-1 flex items-center gap-1"><Zap className="w-3 h-3 text-amber-400" /> {t("dispatch.fatigued")}</div>
           <div className="text-2xl font-bold text-foreground">0</div>
         </div>
@@ -155,7 +155,7 @@ export default function EmergencyDispatch() {
           )}
         </div>
 
-        <div className="bg-card rounded-lg p-4 border border h-fit sticky top-4">
+        <div className="bg-card rounded-lg p-4 border h-fit sticky top-4">
           <h2 className="text-muted-foreground text-sm font-semibold mb-4">
             {selectedRequest ? `Details: ${selectedRequest.type}` : "Select a request to view details"}
           </h2>
@@ -166,17 +166,32 @@ export default function EmergencyDispatch() {
               <div><p className="text-xs text-muted-foreground">Status</p><Badge>{selectedRequest.status}</Badge></div>
               <div><p className="text-xs text-muted-foreground">Location</p><p className="text-sm text-foreground">{selectedRequest.address || "No address provided"}</p></div>
 
+              {/* Show assigned volunteer for public requests */}
+              {selectedRequest.isPublic && selectedRequest.assignedVolunteerName && (
+                <div className="pt-2">
+                  <p className="text-xs text-muted-foreground mb-2">Assigned Volunteer</p>
+                  <div className="flex items-center justify-between bg-secondary/50 p-2 rounded border">
+                    <div>
+                      <p className="text-xs font-medium text-foreground">{selectedRequest.assignedVolunteerName}</p>
+                      <p className="text-[10px] text-muted-foreground">{selectedRequest.assignedVolunteerPhone || "No phone"}</p>
+                    </div>
+                    <Badge variant="outline" className="text-[10px] h-4 text-emerald-600 border-emerald-500/30 dark:text-emerald-400">Active</Badge>
+                  </div>
+                </div>
+              )}
+
+              {/* Show assigned volunteers for internal requests */}
               {selectedRequest.assignedVolunteers?.length > 0 && (
                 <div className="pt-2">
                   <p className="text-xs text-muted-foreground mb-2">Assigned Personnel</p>
                   <div className="space-y-2">
                     {selectedRequest.assignedVolunteers.map(v => (
-                      <div key={v.id} className="flex items-center justify-between bg-background/50 p-2 rounded border border">
+                      <div key={v.id} className="flex items-center justify-between bg-secondary/50 p-2 rounded border">
                         <div>
                           <p className="text-xs font-medium text-foreground">{v.user?.fullName}</p>
                           <p className="text-[10px] text-muted-foreground">{v.user?.phone || "No phone"}</p>
                         </div>
-                        <Badge variant="outline" className="text-[10px] h-4 text-emerald-400 border-emerald-500/30">Active</Badge>
+                        <Badge variant="outline" className="text-[10px] h-4 text-emerald-600 border-emerald-500/30 dark:text-emerald-400">Active</Badge>
                       </div>
                     ))}
                   </div>

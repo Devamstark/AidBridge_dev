@@ -60,6 +60,8 @@ model PublicHelpRequest {
   peopleCount     Int      @default(1)
   status          String   @default("PENDING")  // PENDING, ASSIGNED, IN_PROGRESS, RESOLVED
   assignedTo      String?  // Volunteer ID
+  assignedVolunteerName  String?
+  assignedVolunteerPhone String?
   resolvedAt      DateTime?
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
