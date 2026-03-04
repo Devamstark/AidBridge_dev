@@ -34,6 +34,19 @@ Open [Base44.com](http://Base44.com) and click on Publish.
 
 **Docs & Support**
 
-Documentation: [https://docs.base44.com/Integrations/Using-GitHub](https://docs.base44.com/Integrations/Using-GitHub)
+- Documentation: [docs/README.md](docs/README.md) (Organized project documentation)
+- Base44 Documentation: [https://docs.base44.com/Integrations/Using-GitHub](https://docs.base44.com/Integrations/Using-GitHub)
+- Support: [https://app.base44.com/support](https://app.base44.com/support)
 
-Support: [https://app.base44.com/support](https://app.base44.com/support)
+---
+
+### Project Documentation
+
+All project-specific documentation has been organized into the `docs/` directory:
+
+- `docs/specs/`: System specifications, technology stack, and architectures.
+- `docs/deployment/`: deployment guides, Vercel configuration, and checklists.
+- `docs/development/`: Quick start guides, environment variables, and testing procedures.
+- `docs/migration/`: Database and Prisma migration history.
+- `docs/fixes/`: Records of major fixes and updates applied to the project.
+- `docs/status/`: Current feature status and UI redesign progress.
