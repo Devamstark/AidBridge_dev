@@ -13,11 +13,11 @@ const createLocationSchema = z.object({
     state: z.string().optional(),
     zipCode: z.string().optional(),
     country: z.string().optional(),
-    latitude: z.number(),
-    longitude: z.number(),
+    latitude: z.number().optional(),
+    longitude: z.number().optional(),
     capacity: z.number().optional(),
     phone: z.string().optional(),
-    email: z.string().email().optional(),
+    email: z.string().email().optional().or(z.literal('')),
     managerName: z.string().optional(),
     disasterId: z.string().optional(),
     resources: z.any().optional(),
@@ -44,7 +44,7 @@ const createDistributionSchema = z.object({
     disasterId: z.string().optional(),
     locationId: z.string().optional(),
     status: z.string().optional(),
-    scheduledDate: z.string().datetime().optional(),
+    scheduledDate: z.string().optional().or(z.literal('')),
     notes: z.string().optional(),
     items: z.array(z.object({ resourceId: z.string(), quantity: z.number() })).optional(),
 })
@@ -69,7 +69,17 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             }
             if (req.method === 'POST') {
                 const body = createLocationSchema.parse(req.body)
-                const location = await prisma.location.create({ data: { ...body, operationalStatus: body.operationalStatus || 'OPEN', country: body.country || 'USA', currentOccupancy: 0 } })
+                const location = await prisma.location.create({
+                    data: {
+                        ...body,
+                        operationalStatus: body.operationalStatus || 'OPEN',
+                        country: body.country || 'USA',
+                        currentOccupancy: 0,
+                        latitude: body.latitude || 0,
+                        longitude: body.longitude || 0,
+                        disasterId: body.disasterId || null
+                    }
+                })
                 return res.status(201).json(location)
             }
             return methodNotAllowed(res, ['GET', 'POST'])
@@ -106,7 +116,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             if (req.method === 'POST') {
                 const body = createDistributionSchema.parse(req.body)
                 const { items, ...distributionData } = body
-                const distribution = await prisma.distribution.create({ data: { ...distributionData, status: body.status || 'PLANNED', scheduledDate: body.scheduledDate ? new Date(body.scheduledDate) : null, createdById: authUser.id, quantityDistributed: 0, items: items ? { create: items.map(item => ({ resourceId: item.resourceId, quantity: item.quantity, quantityDistributed: 0 })) } : undefined }, include: { items: { include: { resource: true } } } })
+                const distribution = await prisma.distribution.create({ data: { ...distributionData, status: body.status || 'PLANNED', scheduledDate: (body.scheduledDate && body.scheduledDate !== '') ? new Date(body.scheduledDate) : null, createdById: authUser.id, quantityDistributed: 0, items: items ? { create: items.map(item => ({ resourceId: item.resourceId, quantity: item.quantity, quantityDistributed: 0 })) } : undefined }, include: { items: { include: { resource: true } } } })
                 return res.status(201).json(distribution)
             }
             return methodNotAllowed(res, ['GET', 'POST'])

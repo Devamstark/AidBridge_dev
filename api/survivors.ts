@@ -7,10 +7,10 @@ import { handleHttpError, methodNotAllowed } from './_lib/utils.js'
 const createSurvivorSchema = z.object({
     firstName: z.string().min(1),
     lastName: z.string().min(1),
-    dateOfBirth: z.string().datetime().optional(),
+    dateOfBirth: z.string().optional().or(z.literal('')),
     gender: z.string().optional(),
     phone: z.string().optional(),
-    email: z.string().email().optional(),
+    email: z.string().email().optional().or(z.literal('')),
     address: z.string().optional(),
     latitude: z.number().optional(),
     longitude: z.number().optional(),
@@ -90,7 +90,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             const randomNum = Math.floor(1000 + Math.random() * 9000)
             const caseNumber = `SRV-${dateStr}-${randomNum}`
             const survivor = await prisma.survivor.create({
-                data: { ...body, caseNumber, status: body.status || 'REGISTERED', familySize: body.familySize || 1, dependents: body.dependents || 0, medicalNeeds: body.medicalNeeds || [], medications: body.medications || [], allergies: body.allergies || [], dateOfBirth: body.dateOfBirth ? new Date(body.dateOfBirth) : null },
+                data: { ...body, caseNumber, status: body.status || 'REGISTERED', familySize: body.familySize || 1, dependents: body.dependents || 0, medicalNeeds: body.medicalNeeds || [], medications: body.medications || [], allergies: body.allergies || [], dateOfBirth: (body.dateOfBirth && body.dateOfBirth !== '') ? new Date(body.dateOfBirth) : null },
             })
             await prisma.auditLog.create({ data: { action: 'CREATE', entity: 'Survivor', entityId: survivor.id, details: { caseNumber } } })
             return res.status(201).json(survivor)

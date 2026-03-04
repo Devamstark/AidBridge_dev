@@ -7,7 +7,7 @@ export function handleHttpError(res: VercelResponse, error: unknown) {
   if (error instanceof z.ZodError) {
     return res.status(400).json({
       error: 'Validation error',
-      details: error.errors
+      details: error.issues
     })
   }
 

@@ -7,8 +7,8 @@ import { handleHttpError, methodNotAllowed } from './_lib/utils.js'
 const triggerSchema = z.object({
     type: z.string(),
     priority: z.string(),
-    latitude: z.number(),
-    longitude: z.number(),
+    latitude: z.number().optional(),
+    longitude: z.number().optional(),
     address: z.string().optional(),
     description: z.string(),
     disasterId: z.string().optional(),
@@ -32,9 +32,28 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             if (req.method !== 'POST') return methodNotAllowed(res, ['POST'])
             const body = triggerSchema.parse(req.body)
             const { maxVolunteers = 5, ...requestData } = body
-            const request = await prisma.emergencyRequest.create({ data: { ...requestData, status: 'PENDING', reportedAt: new Date(), maxVolunteers }, include: { disaster: true } })
+            const request = await prisma.emergencyRequest.create({
+                data: {
+                    ...requestData,
+                    status: 'PENDING',
+                    reportedAt: new Date(),
+                    maxVolunteers,
+                    latitude: body.latitude || 0,
+                    longitude: body.longitude || 0,
+                    disasterId: body.disasterId || null
+                },
+                include: { disaster: true }
+            })
             const availableVolunteers = await prisma.volunteer.findMany({ where: { status: { in: ['AVAILABLE', 'ON_DUTY'] } }, take: maxVolunteers, include: { user: { select: { fullName: true, email: true, phone: true } } } })
-            await prisma.mission.createMany({ data: availableVolunteers.map((v: any) => ({ emergencyRequestId: request.id, volunteerId: v.id, latitude: body.latitude, longitude: body.longitude, status: 'ASSIGNED' })) })
+            await prisma.mission.createMany({
+                data: availableVolunteers.map((v: any) => ({
+                    emergencyRequestId: request.id,
+                    volunteerId: v.id,
+                    latitude: body.latitude || 0,
+                    longitude: body.longitude || 0,
+                    status: 'ASSIGNED'
+                }))
+            })
             if (availableVolunteers.length > 0) await prisma.volunteer.updateMany({ where: { id: { in: availableVolunteers.map((v: any) => v.id) } }, data: { status: 'ON_DUTY' } })
             await prisma.auditLog.create({ data: { action: 'TRIGGER_EMERGENCY_DISPATCH', entity: 'EmergencyRequest', entityId: request.id, details: { type: body.type, priority: body.priority, volunteersAssigned: availableVolunteers.length } } })
             return res.status(201).json({ request, assignedVolunteers: availableVolunteers.length, volunteers: availableVolunteers.map((v: any) => ({ id: v.id, name: v.user.fullName, email: v.user.email })) })

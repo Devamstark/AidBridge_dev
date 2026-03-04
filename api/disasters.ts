@@ -13,7 +13,7 @@ const createDisasterSchema = z.object({
     longitude: z.number().optional(),
     radius: z.number().optional(),
     description: z.string().optional(),
-    startDate: z.string().datetime(),
+    startDate: z.string().datetime().optional(),
     endDate: z.string().datetime().optional(),
     estimatedAffected: z.number().optional(),
 })
@@ -72,7 +72,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         if (req.method === 'POST') {
             const body = createDisasterSchema.parse(req.body)
             const disaster = await prisma.disaster.create({
-                data: { ...body, severity: body.severity || 1, startDate: new Date(body.startDate), endDate: body.endDate ? new Date(body.endDate) : null, status: 'ACTIVE' },
+                data: {
+                    ...body,
+                    severity: body.severity || 1,
+                    startDate: body.startDate ? new Date(body.startDate) : new Date(),
+                    endDate: body.endDate ? new Date(body.endDate) : null,
+                    status: 'ACTIVE'
+                },
             })
             return res.status(201).json(disaster)
         }
