@@ -104,9 +104,9 @@ export default function HelpRequestForm() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-red-50 py-8">
       <div className="max-w-3xl mx-auto px-4">
-        <Button 
-          variant="ghost" 
-          onClick={() => navigate('/help')} 
+        <Button
+          variant="ghost"
+          onClick={() => navigate('/')}
           className="mb-6 text-slate-600 hover:text-slate-900 hover:bg-white/50"
         >
           <ArrowLeft className="w-4 h-4 mr-2" /> Back to Home
@@ -231,11 +231,10 @@ export default function HelpRequestForm() {
                         key={type.value}
                         type="button"
                         onClick={() => setFormData({ ...formData, emergencyType: type.value })}
-                        className={`p-3 rounded-lg border-2 transition-all ${
-                          formData.emergencyType === type.value
+                        className={`p-3 rounded-lg border-2 transition-all ${formData.emergencyType === type.value
                             ? `border-${type.color.replace('bg-', '')} bg-${type.color.replace('bg-', '')}/10`
                             : 'border-slate-200 hover:border-slate-300'
-                        }`}
+                          }`}
                       >
                         <div className="text-2xl mb-1">{type.icon}</div>
                         <div className="text-xs font-medium text-slate-700">{type.label}</div>
@@ -282,9 +281,9 @@ export default function HelpRequestForm() {
                 </div>
               </div>
 
-              <Button 
-                type="submit" 
-                className="w-full bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-semibold py-6 text-lg shadow-lg hover:shadow-xl transition-all" 
+              <Button
+                type="submit"
+                className="w-full bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-semibold py-6 text-lg shadow-lg hover:shadow-xl transition-all"
                 disabled={isLoading}
               >
                 {isLoading ? 'Submitting Request...' : 'Submit Emergency Request'}

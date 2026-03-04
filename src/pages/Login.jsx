@@ -20,7 +20,7 @@ export default function LoginPage() {
   React.useEffect(() => {
     if (isAuthenticated && !isLoadingAuth && !hasRedirected.current) {
       hasRedirected.current = true;
-      navigate("/", { replace: true });
+      navigate("/Dashboard", { replace: true });
     }
   }, [isAuthenticated, isLoadingAuth, navigate]);
 
@@ -30,7 +30,7 @@ export default function LoginPage() {
     setIsLoading(true);
     try {
       await login(email, password);
-      navigate("/dashboard", { replace: true });
+      navigate("/Dashboard", { replace: true });
     } catch (err) {
       setError("Invalid credentials.");
     } finally {
@@ -43,7 +43,7 @@ export default function LoginPage() {
     setIsLoading(true);
     try {
       await loginAsRole(role);
-      navigate("/dashboard", { replace: true });
+      navigate("/Dashboard", { replace: true });
     } catch (err) {
       setError("Login failed.");
     } finally {

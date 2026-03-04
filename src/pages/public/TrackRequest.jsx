@@ -46,7 +46,7 @@ export default function TrackRequest() {
       <div className="max-w-3xl mx-auto px-4">
         <Button
           variant="ghost"
-          onClick={() => navigate('/help')}
+          onClick={() => navigate('/')}
           className="mb-6 text-slate-600 hover:text-slate-900 hover:bg-white/50"
         >
           <ArrowLeft className="w-4 h-4 mr-2" /> Back to Home

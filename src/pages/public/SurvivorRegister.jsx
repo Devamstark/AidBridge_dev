@@ -79,9 +79,9 @@ export default function SurvivorRegister() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 py-8">
       <div className="max-w-3xl mx-auto px-4">
-        <Button 
-          variant="ghost" 
-          onClick={() => navigate('/help')} 
+        <Button
+          variant="ghost"
+          onClick={() => navigate('/')}
           className="mb-6 text-slate-600 hover:text-slate-900 hover:bg-white/50"
         >
           <ArrowLeft className="w-4 h-4 mr-2" /> Back to Home
@@ -98,7 +98,7 @@ export default function SurvivorRegister() {
                 <p className="text-sm text-slate-600">Register for disaster assistance and support</p>
               </div>
             </div>
-            
+
             {/* Progress Bar */}
             <div className="flex gap-2 mt-6">
               {[1, 2, 3].map((s) => (
@@ -227,9 +227,9 @@ export default function SurvivorRegister() {
                   </div>
                   <div className="space-y-4">
                     <div className="flex items-start gap-3 p-4 bg-slate-50 border border-slate-200 rounded-lg">
-                      <Checkbox 
-                        id="consentContact" 
-                        checked={formData.consentContact} 
+                      <Checkbox
+                        id="consentContact"
+                        checked={formData.consentContact}
                         onCheckedChange={(v) => setFormData({ ...formData, consentContact: v })}
                         className="data-[state=checked]:bg-blue-600"
                       />
@@ -239,9 +239,9 @@ export default function SurvivorRegister() {
                       </div>
                     </div>
                     <div className="flex items-start gap-3 p-4 bg-slate-50 border border-slate-200 rounded-lg">
-                      <Checkbox 
-                        id="consentDataSharing" 
-                        checked={formData.consentDataSharing} 
+                      <Checkbox
+                        id="consentDataSharing"
+                        checked={formData.consentDataSharing}
                         onCheckedChange={(v) => setFormData({ ...formData, consentDataSharing: v })}
                         className="data-[state=checked]:bg-blue-600"
                       />

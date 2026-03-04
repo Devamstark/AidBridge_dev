@@ -69,15 +69,16 @@ const AuthenticatedApp = () => {
   return (
     <Routes>
       {/* Public Routes */}
-      <Route path="/help" element={<HelpLanding />} />
+      <Route path="/" element={<HelpLanding />} />
+      <Route path="/help" element={<Navigate to="/" replace />} />
       <Route path="/help/request" element={<HelpRequestForm />} />
       <Route path="/register" element={<SurvivorRegister />} />
       <Route path="/track" element={<TrackRequest />} />
       <Route path="/login" element={<Login />} />
       <Route path="/unauthorized" element={<Unauthorized />} />
 
-      {/* Root - Redirect to dashboard for authenticated users, /help for public */}
-      <Route path="/" element={
+      {/* Authenticated Root (Legacy redirect if needed) */}
+      <Route path="/home" element={
         <ProtectedRoute pageName="Dashboard">
           <LayoutWrapper currentPageName="Dashboard">
             <MainPage />
