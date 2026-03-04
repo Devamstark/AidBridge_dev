@@ -1,7 +1,7 @@
 import axios, { AxiosInstance, AxiosError } from 'axios'
 import * as mock from '@/lib/mockData'
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || '/api'
+const API_BASE_URL = (import.meta as any).env.VITE_API_URL || '/api'
 const USE_MOCK_DATA = false // Set to true for local testing without backend
 
 // In-memory storage for mock data

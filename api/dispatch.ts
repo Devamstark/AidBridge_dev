@@ -63,8 +63,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         if (url.includes('/assign')) {
             if (req.method !== 'PUT') return methodNotAllowed(res, ['PUT'])
             const body = assignSchema.parse(req.body)
-            const updatedRequest = await prisma.publicHelpRequest.update({ where: { requestId: id }, data: { assignedTo: body.volunteerId, status: 'ASSIGNED' } })
-            const request = await prisma.publicHelpRequest.findUnique({ where: { requestId: id } })
+            const updatedRequest = await (prisma as any).publicHelpRequest.update({ where: { requestId: id }, data: { assignedTo: body.volunteerId, status: 'ASSIGNED' } })
+            const request = await (prisma as any).publicHelpRequest.findUnique({ where: { requestId: id } })
             if (request) { await prisma.mission.create({ data: { emergencyRequestId: request.id, volunteerId: body.volunteerId, latitude: request.latitude || 0, longitude: request.longitude || 0, status: 'ASSIGNED' } }) }
             return res.json({ success: true, request: updatedRequest })
         }
@@ -77,7 +77,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             if (status) where.status = status
             if (priority) where.priority = priority
             if (type === 'public') {
-                const requests = await prisma.publicHelpRequest.findMany({ where, orderBy: { createdAt: 'desc' }, include: { disaster: { select: { name: true } } } })
+                const requests = await (prisma as any).publicHelpRequest.findMany({ where, orderBy: { createdAt: 'desc' }, include: { disaster: { select: { name: true } } } })
                 return res.json(requests)
             }
             const requests = await prisma.emergencyRequest.findMany({ where, orderBy: { createdAt: 'desc' }, include: { disaster: { select: { name: true } }, assignedVolunteers: { include: { user: { select: { fullName: true, phone: true } } } } } })

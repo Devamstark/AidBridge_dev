@@ -3,7 +3,7 @@ import { apiClient } from '@/api/client'
 import { endpoints } from '@/api/endpoints'
 import { mockUsers } from '@/lib/mockData'
 
-const AuthContext = createContext()
+const AuthContext = createContext(null)
 
 const STORAGE_KEY = 'aidbridge_auth_state'
 const USER_KEY = 'aidbridge_user_data'
