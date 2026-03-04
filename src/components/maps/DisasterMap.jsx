@@ -2,6 +2,12 @@ import React, { useEffect, useState } from "react";
 import { MapContainer, TileLayer, Marker, Popup, CircleMarker } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
+import { useDisasters } from "@/hooks/useDisasters";
+import { useLocations } from "@/hooks/useLocations";
+import { useVolunteers } from "@/hooks/useVolunteers";
+import { useEmergencyRequests } from "@/hooks/useEmergencyRequests";
+import { Badge } from "@/components/ui/badge";
+import { AlertTriangle, MapPin, Users, HeartPulse } from "lucide-react";
 
 // Fix for default marker icon issue in React Leaflet
 delete L.Icon.Default.prototype._getIconUrl;
@@ -39,22 +45,7 @@ const MAP_TILES = {
   },
 };
 
-// Mock data for map
-const mockDisasters = [
-  { id: 1, name: "Hurricane Milton", lat: 27.9506, lng: -82.4572, type: "hurricane", severity: 4 },
-  { id: 2, name: "California Wildfires", lat: 34.0522, lng: -118.2437, type: "wildfire", severity: 5 },
-  { id: 3, name: "Texas Flooding", lat: 29.7604, lng: -95.3698, type: "flood", severity: 3 },
-];
-
-const mockLocations = [
-  { id: 1, name: "Central High School Shelter", lat: 27.9506, lng: -82.4572, type: "shelter", occupancy: 342, capacity: 500 },
-  { id: 2, name: "Community Center", lat: 27.9600, lng: -82.4700, type: "distribution", occupancy: 85, capacity: 200 },
-];
-
-const mockVolunteers = [
-  { id: 1, name: "John Smith", lat: 27.9700, lng: -82.4500, status: "AVAILABLE" },
-  { id: 2, name: "Sarah Johnson", lat: 27.9400, lng: -82.4800, status: "ON_DUTY" },
-];
+// No mock data - using hooks now
 
 const getDisasterColor = (severity) => {
   if (severity >= 5) return "#ef4444";
@@ -77,7 +68,13 @@ export default function DisasterMap({ height = "400px", showControls = true }) {
     disasters: true,
     locations: true,
     volunteers: true,
+    requests: true,
   });
+
+  const { data: disasters = [] } = useDisasters({ limit: 100 });
+  const { data: locations = [] } = useLocations({ limit: 100 });
+  const { data: volunteers = [] } = useVolunteers({ limit: 200 });
+  const { data: requests = [] } = useEmergencyRequests({ limit: 100 });
 
   const defaultCenter = { lat: 32.0, lng: -95.0 };
   const defaultZoom = 5;
@@ -107,11 +104,11 @@ export default function DisasterMap({ height = "400px", showControls = true }) {
         />
 
         {/* Disaster Markers */}
-        {activeLayers.disasters && mockDisasters.map((disaster) => (
+        {activeLayers.disasters && disasters.filter(d => d.latitude && d.longitude).map((disaster) => (
           <CircleMarker
             key={disaster.id}
-            center={[disaster.lat, disaster.lng]}
-            radius={disaster.severity * 8}
+            center={[disaster.latitude, disaster.longitude]}
+            radius={(disaster.severity || 1) * 8}
             fillColor={getDisasterColor(disaster.severity)}
             color="#fff"
             weight={2}
@@ -121,42 +118,79 @@ export default function DisasterMap({ height = "400px", showControls = true }) {
             <Popup>
               <div className="p-2 min-w-[200px]">
                 <h3 className="font-semibold text-slate-900">{disaster.name}</h3>
-                <p className="text-sm text-slate-600 capitalize">Type: {disaster.type}</p>
+                <p className="text-sm text-slate-600 capitalize">Type: {disaster.disasterType}</p>
                 <p className="text-sm text-slate-600">Severity: {disaster.severity}/5</p>
+                <p className="text-xs text-slate-400 mt-1">{disaster.affectedArea}</p>
+              </div>
+            </Popup>
+          </CircleMarker>
+        ))}
+
+        {/* Emergency Request Markers */}
+        {activeLayers.requests && requests.filter(r => r.latitude && r.longitude).map((req) => (
+          <CircleMarker
+            key={req.id}
+            center={[req.latitude, req.longitude]}
+            radius={req.priority === 'P0' ? 12 : 8}
+            fillColor={req.priority === 'P0' ? "#ef4444" : "#f59e0b"}
+            color={req.priority === 'P0' ? "#fff" : "transparent"}
+            weight={req.priority === 'P0' ? 3 : 0}
+            opacity={1}
+            fillOpacity={0.8}
+            className={req.priority === 'P0' ? "animate-pulse" : ""}
+          >
+            <Popup>
+              <div className="p-2 min-w-[220px]">
+                <div className="flex items-center justify-between mb-1">
+                  <h3 className="font-bold text-slate-900 flex items-center gap-1">
+                    <HeartPulse className={`w-4 h-4 ${req.priority === 'P0' ? 'text-red-500' : 'text-amber-500'}`} />
+                    {req.type}
+                  </h3>
+                  <Badge variant={req.priority === 'P0' ? "destructive" : "secondary"}>{req.priority}</Badge>
+                </div>
+                <p className="text-sm text-slate-700 font-medium mb-1">{req.isPublic ? req.fullName : 'Internal Request'}</p>
+                <p className="text-sm text-slate-600 line-clamp-2 italic">"{req.description}"</p>
+                <div className="mt-2 pt-2 border-t border-slate-100 flex items-center justify-between">
+                  <Badge className="text-[10px] uppercase">{req.status}</Badge>
+                  {req.isPublic && <span className="text-[10px] text-blue-500 font-bold">PORTAL</span>}
+                </div>
               </div>
             </Popup>
           </CircleMarker>
         ))}
 
         {/* Location Markers */}
-        {activeLayers.locations && mockLocations.map((location) => (
+        {activeLayers.locations && locations.filter(l => l.latitude && l.longitude).map((location) => (
           <Marker
             key={location.id}
-            position={[location.lat, location.lng]}
+            position={[location.latitude, location.longitude]}
           >
             <Popup>
               <div className="p-2 min-w-[200px]">
                 <h3 className="font-semibold text-slate-900">{location.name}</h3>
-                <p className="text-sm text-slate-600 capitalize">Type: {location.type}</p>
+                <p className="text-sm text-slate-600 capitalize">Type: {location.locationType?.toLowerCase()}</p>
                 <p className="text-sm text-slate-600">
-                  Occupancy: {location.occupancy} / {location.capacity}
+                  Occupancy: {location.currentOccupancy || 0} / {location.capacity || "N/A"}
                 </p>
-                <div className="w-full bg-slate-200 rounded-full h-2 mt-2">
-                  <div
-                    className="bg-blue-600 h-2 rounded-full"
-                    style={{ width: `${(location.occupancy / location.capacity) * 100}%` }}
-                  />
-                </div>
+                {location.capacity > 0 && (
+                  <div className="w-full bg-slate-200 rounded-full h-2 mt-2">
+                    <div
+                      className="bg-blue-600 h-2 rounded-full"
+                      style={{ width: `${((location.currentOccupancy || 0) / location.capacity) * 100}%` }}
+                    />
+                  </div>
+                )}
+                <p className="text-xs text-slate-500 mt-2">{location.address}</p>
               </div>
             </Popup>
           </Marker>
         ))}
 
         {/* Volunteer Markers */}
-        {activeLayers.volunteers && mockVolunteers.map((volunteer) => (
+        {activeLayers.volunteers && volunteers.filter(v => v.currentLat && v.currentLng).map((volunteer) => (
           <CircleMarker
             key={volunteer.id}
-            center={[volunteer.lat, volunteer.lng]}
+            center={[volunteer.currentLat, volunteer.currentLng]}
             radius={6}
             fillColor={getVolunteerColor(volunteer.status)}
             color="#fff"
@@ -166,8 +200,9 @@ export default function DisasterMap({ height = "400px", showControls = true }) {
           >
             <Popup>
               <div className="p-2 min-w-[150px]">
-                <h3 className="font-semibold text-slate-900">{volunteer.name}</h3>
+                <h3 className="font-semibold text-slate-900">{volunteer.user?.fullName || "Volunteer"}</h3>
                 <p className="text-sm text-slate-600">Status: {volunteer.status}</p>
+                {volunteer.status === 'ON_DUTY' && <p className="text-xs text-amber-600 font-medium">Currently Responding</p>}
               </div>
             </Popup>
           </CircleMarker>
@@ -193,11 +228,10 @@ export default function DisasterMap({ height = "400px", showControls = true }) {
               <button
                 key={key}
                 onClick={() => setMapType(key)}
-                className={`w-full text-left px-2 py-1.5 rounded text-xs font-medium transition-colors ${
-                  mapType === key
-                    ? "bg-blue-600 text-white"
-                    : "text-slate-600 hover:bg-slate-100"
-                }`}
+                className={`w-full text-left px-2 py-1.5 rounded text-xs font-medium transition-colors ${mapType === key
+                  ? "bg-blue-600 text-white"
+                  : "text-slate-600 hover:bg-slate-100"
+                  }`}
               >
                 <span className="mr-1.5">{icon}</span>
                 {label}
@@ -253,6 +287,18 @@ export default function DisasterMap({ height = "400px", showControls = true }) {
                 Volunteers
               </span>
             </label>
+            <label className="flex items-center gap-2 text-xs text-slate-600 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={activeLayers.requests}
+                onChange={(e) => setActiveLayers({ ...activeLayers, requests: e.target.checked })}
+                className="rounded border-slate-300 text-amber-500 focus:ring-amber-500"
+              />
+              <span className="flex items-center gap-1">
+                <div className="w-2 h-2 rounded-full bg-amber-500" />
+                Requests
+              </span>
+            </label>
           </div>
         </div>
       )}
@@ -284,6 +330,10 @@ export default function DisasterMap({ height = "400px", showControls = true }) {
           <div className="flex items-center gap-2 text-xs text-slate-600">
             <div className="w-3 h-3 rounded-full bg-green-500" />
             <span>Available</span>
+          </div>
+          <div className="flex items-center gap-2 text-xs text-slate-600">
+            <div className="w-3 h-3 rounded-full bg-amber-500 animate-pulse" />
+            <span>Emergency Request</span>
           </div>
         </div>
       </div>
