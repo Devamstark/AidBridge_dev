@@ -72,10 +72,16 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         }
 
         // Track Request
-        if (id === 'track' || url.includes('/public/track')) {
+        let activeRoute = id
+        let searchId = req.query.trackingId as string || ''
+
+        if (id.startsWith('track')) {
+            activeRoute = 'track'
+            if (!searchId) searchId = id.replace('track', '').replace(/^\//, '')
+        }
+
+        if (activeRoute === 'track' || url.includes('/public/track')) {
             if (req.method !== 'GET') return methodNotAllowed(res, ['GET'])
-            const trackId = req.query.idParam as string || req.query.id as string || '' // handle both cases
-            const searchId = id === 'track' ? (req.query.trackingId as string || trackId) : trackId
 
             if (!searchId || searchId === 'track') return res.status(400).json({ error: 'Request ID is required' })
 
