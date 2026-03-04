@@ -21,7 +21,19 @@ const LOCATION_TYPES = ["SHELTER", "WAREHOUSE", "DISTRIBUTION_CENTER", "CLINIC",
 export default function Locations() {
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
-  const [form, setForm] = useState({ name: "", locationType: "SHELTER", address: "", capacity: 100, currentOccupancy: 0, operationalStatus: "OPEN", disasterId: "", contactPhone: "", managerName: "" });
+  const [form, setForm] = useState({
+    name: "",
+    locationType: "SHELTER",
+    address: "",
+    capacity: 100,
+    currentOccupancy: 0,
+    operationalStatus: "OPEN",
+    disasterId: "",
+    contactPhone: "",
+    managerName: "",
+    latitude: 0,
+    longitude: 0
+  });
   const queryClient = useQueryClient();
 
   const { data: locations = [], isLoading } = useQuery({
@@ -115,6 +127,10 @@ export default function Locations() {
               </div>
             </div>
             <div><Label className="text-slate-300">Address</Label><Input value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} placeholder="Full address" /></div>
+            <div className="grid grid-cols-2 gap-4">
+              <div><Label className="text-slate-300">Latitude</Label><Input type="number" step="any" value={form.latitude} onChange={(e) => setForm({ ...form, latitude: parseFloat(e.target.value) || 0 })} /></div>
+              <div><Label className="text-slate-300">Longitude</Label><Input type="number" step="any" value={form.longitude} onChange={(e) => setForm({ ...form, longitude: parseFloat(e.target.value) || 0 })} /></div>
+            </div>
             <div className="grid grid-cols-2 gap-4">
               <div><Label className="text-slate-300">Capacity</Label><Input type="number" value={form.capacity} onChange={(e) => setForm({ ...form, capacity: parseInt(e.target.value) || 0 })} /></div>
               <div><Label className="text-slate-300">Disaster Event</Label>

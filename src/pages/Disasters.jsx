@@ -23,7 +23,17 @@ const DISASTER_TYPES = ["tornado", "hurricane", "flood", "earthquake", "conflict
 export default function Disasters() {
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
-  const [form, setForm] = useState({ name: "", disasterType: "hurricane", severity: 3, status: "ACTIVE", affectedArea: "", description: "", estimatedAffected: 0 });
+  const [form, setForm] = useState({
+    name: "",
+    disasterType: "hurricane",
+    severity: 3,
+    status: "ACTIVE",
+    affectedArea: "",
+    description: "",
+    estimatedAffected: 0,
+    latitude: 0,
+    longitude: 0
+  });
   const queryClient = useQueryClient();
 
   const { data: disasters = [], isLoading } = useQuery({
@@ -100,7 +110,17 @@ export default function Disasters() {
     onSuccess: () => { queryClient.invalidateQueries({ queryKey: ["disasters"] }); },
   });
 
-  const resetForm = () => setForm({ name: "", disasterType: "hurricane", severity: 3, status: "ACTIVE", affectedArea: "", description: "", estimatedAffected: 0 });
+  const resetForm = () => setForm({
+    name: "",
+    disasterType: "hurricane",
+    severity: 3,
+    status: "ACTIVE",
+    affectedArea: "",
+    description: "",
+    estimatedAffected: 0,
+    latitude: 0,
+    longitude: 0
+  });
 
   const filtered = disasters.filter(d =>
     d.name?.toLowerCase().includes(search.toLowerCase()) ||
@@ -186,6 +206,16 @@ export default function Disasters() {
                       {[1, 2, 3, 4, 5].map(n => <SelectItem key={n} value={String(n)}>{n} — {["Minor", "Moderate", "Significant", "Severe", "Catastrophic"][n - 1]}</SelectItem>)}
                     </SelectContent>
                   </Select>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label className="text-slate-300">Latitude</Label>
+                  <Input type="number" step="any" value={form.latitude} onChange={(e) => setForm({ ...form, latitude: parseFloat(e.target.value) || 0 })} placeholder="e.g. 27.95" />
+                </div>
+                <div>
+                  <Label className="text-slate-300">Longitude</Label>
+                  <Input type="number" step="any" value={form.longitude} onChange={(e) => setForm({ ...form, longitude: parseFloat(e.target.value) || 0 })} placeholder="e.g. -82.45" />
                 </div>
               </div>
               <div>
