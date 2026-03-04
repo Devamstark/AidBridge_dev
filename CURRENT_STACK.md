@@ -22,12 +22,6 @@
 │  │   TanStack Query     │         │  Neon PostgreSQL     │  │
 │  │   (Server State)     │         │  (Database)          │  │
 │  └──────────────────────┘         └──────────────────────┘  │
-│                                            │                 │
-│                                            ▼                 │
-│                                   ┌──────────────────────┐  │
-│                                   │   Stripe API         │  │
-│                                   │   (Payments)         │  │
-│                                   └──────────────────────┘  │
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -151,16 +145,6 @@
 - Role-based access control (Admin, Coordinator, Volunteer)
 - Break-glass emergency override mode
 - Token refresh mechanism
-
----
-
-## 💳 Payment Integration
-
-| Technology | Version | Purpose |
-|------------|---------|---------|
-| **Stripe** | 15.0.0 | Payment Processing |
-| **@stripe/react-stripe-js** | 3.0.0 | Stripe React Components |
-| **@stripe/stripe-js** | 5.2.0 | Stripe JavaScript Library |
 
 ---
 
@@ -369,10 +353,9 @@ DATABASE_URL="postgresql://..."
 JWT_SECRET="..."
 NEXTAUTH_SECRET="..."
 
-# Stripe
-STRIPE_SECRET_KEY="sk_test_..."
-STRIPE_PUBLISHABLE_KEY="pk_test_..."
-STRIPE_WEBHOOK_SECRET="whsec_..."
+# Authentication
+JWT_SECRET="..."
+NEXTAUTH_SECRET="..."
 ```
 
 ### Build Commands

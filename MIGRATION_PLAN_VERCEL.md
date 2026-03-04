@@ -161,15 +161,9 @@ JWT_REFRESH_SECRET="another-super-secret-key-min-32-chars"
 NEXTAUTH_SECRET="generate-with-openssl-rand-base64-32"
 NEXTAUTH_URL="http://localhost:5173"
 
-# Stripe
-STRIPE_SECRET_KEY="sk_test_..."
-STRIPE_WEBHOOK_SECRET="whsec_..."
-STRIPE_PUBLISHABLE_KEY="pk_test_..."
-
 # App
 VITE_APP_URL="http://localhost:5173"
 VITE_API_URL="/api"
-VITE_STRIPE_PUBLISHABLE_KEY="pk_test_..."
 
 # Production
 PRODUCTION_URL="https://your-app.vercel.app"
@@ -210,10 +204,7 @@ aidbridge/
 │   │   └── requests.ts
 │   ├── alerts/
 │   │   └── disaster.ts
-│   ├── stripe/
-│   │   ├── create-payment-intent.ts
-│   │   └── webhook.ts
-│   └── trpc/
+│   ├── trpc/
 │       └── [trpc].ts
 ├── src/
 │   ├── api/
@@ -1253,9 +1244,6 @@ export const endpoints = {
   
   // Alerts
   disasterAlerts: '/alerts/disaster',
-  
-  // Stripe
-  stripePayment: '/stripe/create-payment-intent',
 }
 ```
 
@@ -1492,116 +1480,6 @@ export default async function handler(
 
 ---
 
-## 9. Phase 7: Stripe Integration
-
-### 9.1 Create Payment Intent
-
-**api/stripe/create-payment-intent.ts:**
-```typescript
-import type { NextApiRequest, NextApiResponse } from 'next'
-import Stripe from 'stripe'
-import { requireAuth } from '../_lib/auth'
-
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2024-12-18.acacia',
-})
-
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
-  await requireAuth(req)
-  
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' })
-  }
-  
-  const { amount, currency = 'usd' } = req.body
-  
-  try {
-    const paymentIntent = await stripe.paymentIntents.create({
-      amount,
-      currency,
-      automatic_payment_methods: {
-        enabled: true,
-      },
-    })
-    
-    res.json({
-      clientSecret: paymentIntent.client_secret,
-    })
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to create payment intent' })
-  }
-}
-```
-
-### 9.2 Stripe Webhook
-
-**api/stripe/webhook.ts:**
-```typescript
-import type { NextApiRequest, NextApiResponse } from 'next'
-import Stripe from 'stripe'
-import { prisma } from '../_lib/db'
-
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2024-12-18.acacia',
-})
-
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-}
-
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
-  const buf = []
-  for await (const chunk of req) {
-    buf.push(chunk)
-  }
-  const body = Buffer.concat(buf).toString()
-  
-  const sig = req.headers['stripe-signature']!
-  
-  let event: Stripe.Event
-  
-  try {
-    event = stripe.webhooks.constructEvent(
-      body,
-      sig,
-      process.env.STRIPE_WEBHOOK_SECRET!
-    )
-  } catch (err) {
-    return res.status(400).json({ error: 'Webhook signature verification failed' })
-  }
-  
-  // Handle the event
-  switch (event.type) {
-    case 'payment_intent.succeeded':
-      const paymentIntent = event.data.object as Stripe.PaymentIntent
-      // Handle successful payment
-      await prisma.distribution.updateMany({
-        where: { /* match metadata */ },
-        data: { status: 'COMPLETED' }
-      })
-      break
-      
-    case 'payment_intent.payment_failed':
-      // Handle failed payment
-      console.log('Payment failed:', event.data.object)
-      break
-      
-    default:
-      console.log(`Unhandled event type: ${event.type}`)
-  }
-  
-  res.json({ received: true })
-}
-```
-
 ---
 
 ## 10. Phase 8: Offline Support
@@ -1744,8 +1622,6 @@ export function useNetworkStatus() {
    vercel env add DATABASE_URL
    vercel env add JWT_SECRET
    vercel env add NEXTAUTH_SECRET
-   vercel env add STRIPE_SECRET_KEY
-   vercel env add STRIPE_WEBHOOK_SECRET
    ```
 
 5. **Deploy:**
@@ -1757,7 +1633,6 @@ export function useNetworkStatus() {
 
 - [ ] Database migrated to Neon/Supabase
 - [ ] All environment variables set in Vercel
-- [ ] Stripe webhook URL configured
 - [ ] CORS configured for production domain
 - [ ] SSL certificates active
 - [ ] Error monitoring setup (Sentry)
@@ -1772,7 +1647,7 @@ export function useNetworkStatus() {
 - [ ] Remove `@base44/sdk` and `@base44/vite-plugin` from package.json
 - [ ] Remove `/functions` folder
 - [ ] Remove `src/api/base44Client.js`
-- [ ] Install new dependencies (Prisma, NextAuth, Stripe, etc.)
+- [ ] Install new dependencies (Prisma, NextAuth, jose, etc.)
 - [ ] Update `vite.config.js`
 - [ ] Create `.env.local` with all required variables
 
@@ -1794,7 +1669,6 @@ export function useNetworkStatus() {
 - [ ] Create resource endpoints
 - [ ] Create distribution endpoints
 - [ ] Create dispatch endpoints
-- [ ] Create Stripe endpoints
 
 ### Phase 4: Frontend Auth
 - [ ] Rewrite `src/lib/AuthContext.jsx`
@@ -1812,19 +1686,13 @@ export function useNetworkStatus() {
 - [ ] Migrate `triggerEmergencyDispatch` to API route
 - [ ] Migrate `volunteerStatusCheck` to API route
 
-### Phase 7: Stripe
-- [ ] Create payment intent endpoint
-- [ ] Create webhook endpoint
-- [ ] Update frontend Stripe integration
-- [ ] Test payment flow
+### Phase 7: Stripe Deleted
 
 ### Phase 8: Testing
 - [ ] Test authentication flow
 - [ ] Test all CRUD operations
 - [ ] Test offline mode
 - [ ] Test accessibility features
-- [ ] Test responsive design
-- [ ] Test Stripe payments
 - [ ] Load testing
 
 ### Phase 9: Deployment
@@ -1864,7 +1732,6 @@ export function useNetworkStatus() {
 - **NextAuth Docs:** https://next-auth.js.org/
 - **Vercel Docs:** https://vercel.com/docs
 - **Neon Database:** https://neon.tech/docs
-- **Stripe Docs:** https://stripe.com/docs
 
 ---
 

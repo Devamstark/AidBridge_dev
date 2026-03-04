@@ -73,11 +73,6 @@ JWT_SECRET="your-super-secret-jwt-key-min-32-characters"
 NEXTAUTH_SECRET="generate-with-openssl-rand-base64-32"
 NEXTAUTH_URL="https://your-app.vercel.app"
 
-# Stripe (Optional - if using payments)
-STRIPE_SECRET_KEY="sk_live_..."
-STRIPE_PUBLISHABLE_KEY="pk_live_..."
-STRIPE_WEBHOOK_SECRET="whsec_..."
-
 # App
 VITE_APP_URL="https://your-app.vercel.app"
 VITE_API_URL="/api"

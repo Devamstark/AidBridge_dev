@@ -141,13 +141,6 @@ Features:
 
 ---
 
-## Payment Integration
-
-- **Stripe React Components 3.0.0** - Payment UI
-- **Stripe JS 5.2.0** - Payment processing
-
----
-
 ## Rich Text & Content
 
 - **React Markdown 9.0.1** - Markdown rendering
