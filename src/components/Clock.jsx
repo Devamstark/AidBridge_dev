@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import moment from "moment";
 import { Clock as ClockIcon } from "lucide-react";
 
 export default function Clock() {
@@ -32,7 +31,7 @@ export default function Clock() {
     };
 
     window.addEventListener("storage", handleStorageChange);
-    
+
     // Also check for updates periodically (for same-tab updates)
     const checkInterval = setInterval(() => {
       const stored = localStorage.getItem("app_preferences");
@@ -49,14 +48,13 @@ export default function Clock() {
   }, []);
 
   const formatTime = () => {
-    const options = {
+    return new Intl.DateTimeFormat('en-US', {
       hour: 'numeric',
       minute: '2-digit',
       second: '2-digit',
       hour12: preferences.timeFormat === "12h",
       timeZone: preferences.timezone
-    };
-    return new Intl.DateTimeFormat('en-US', options).format(currentTime);
+    }).format(currentTime);
   };
 
   const formatDate = () => {
@@ -70,7 +68,7 @@ export default function Clock() {
       timeZone: preferences.timezone
     };
     const formatted = new Intl.DateTimeFormat('en-US', options).format(currentTime);
-    
+
     // Reorder based on format
     if (preferences.dateFormat === "YYYY-MM-DD") {
       const parts = new Intl.DateTimeFormat('en-US', {
