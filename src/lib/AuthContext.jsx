@@ -65,14 +65,20 @@ export const AuthProvider = ({ children }) => {
 
     try {
       setIsLoadingAuth(true)
-      const storedAuth = sessionStorage.getItem(STORAGE_KEY)
-      const storedUser = sessionStorage.getItem(USER_KEY)
+      const token = localStorage.getItem('token')
 
-      if (storedAuth === 'true' && storedUser) {
-        const userData = JSON.parse(storedUser)
-        setUser(userData)
-        setIsAuthenticated(true)
-        setAuthError(null)
+      if (token) {
+        try {
+          const userData = await apiClient.get('/auth/me')
+          setUser(userData)
+          setIsAuthenticated(true)
+          setAuthError(null)
+        } catch (err) {
+          console.error('Session validation failed:', err)
+          localStorage.removeItem('token')
+          setUser(null)
+          setIsAuthenticated(false)
+        }
       } else {
         setUser(null)
         setIsAuthenticated(false)
@@ -90,24 +96,31 @@ export const AuthProvider = ({ children }) => {
   }, [checkAuth])
 
   const login = async (email, password) => {
-    console.log('Login attempt:', email)
-    if (email && password) {
-      setUser(mockUsers.ADMIN) // Default to admin for backward compatibility
+    console.log('Real login attempt:', email)
+    try {
+      const response = await apiClient.post('/auth/login', { email, password })
+      const { token, user: userData } = response
+
+      localStorage.setItem('token', token)
+      setUser(userData)
       setIsAuthenticated(true)
-      sessionStorage.setItem(STORAGE_KEY, 'true')
-      sessionStorage.setItem(USER_KEY, JSON.stringify(mockUsers.ADMIN))
-      return { token: 'mock_token', user: mockUsers.ADMIN }
+      return { token, user: userData }
+    } catch (error) {
+      console.error('Login failed:', error)
+      throw error
     }
-    throw new Error('Invalid credentials')
   }
 
   const loginAsRole = async (role) => {
+    // For demo purposes, we still allow legacy role login by mapping to mock emails if needed,
+    // but the user wants real login. 
+    // I will keep this for local testing if the user clicks role buttons, 
+    // but redirected to a real login soon.
     const userData = mockUsers[role]
     if (userData) {
       setUser(userData)
       setIsAuthenticated(true)
-      sessionStorage.setItem(STORAGE_KEY, 'true')
-      sessionStorage.setItem(USER_KEY, JSON.stringify(userData))
+      // Note: This won't work for real API calls without a real token
       return { token: 'mock_token', user: userData }
     }
     throw new Error('Invalid role')
@@ -116,8 +129,7 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     setUser(null)
     setIsAuthenticated(false)
-    sessionStorage.removeItem(STORAGE_KEY)
-    sessionStorage.removeItem(USER_KEY)
+    localStorage.removeItem('token')
     window.location.href = '/login'
   }
 
@@ -151,7 +163,7 @@ export const AuthProvider = ({ children }) => {
   }
 
   const isCoordinatorOrHigher = () => {
-    return isAuthenticated && 
+    return isAuthenticated &&
       (user?.role === ROLES.ADMIN || user?.role === ROLES.COORDINATOR)
   }
 

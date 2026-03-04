@@ -211,7 +211,10 @@ class ApiClient {
           if (error.response?.status === 401 && !originalRequest._retry) {
             originalRequest._retry = true
             localStorage.removeItem('token')
-            window.location.href = '/login'
+            // Only redirect if not already on the login page to prevent routing loops
+            if (window.location.pathname !== '/login') {
+              window.location.href = '/login'
+            }
           }
 
           return Promise.reject(this.handleError(error))
