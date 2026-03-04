@@ -9,10 +9,13 @@ import PageHeader from "@/components/ui/PageHeader";
 import { useTranslation } from "@/components/i18n/I18nContext";
 import { Card, CardContent } from "@/components/ui/card";
 import { format } from "date-fns";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { toast } from "sonner";
 
 export default function EmergencyDispatch() {
   const { t } = useTranslation();
   const [selectedRequest, setSelectedRequest] = useState(null);
+  const [selectedVolunteerId, setSelectedVolunteerId] = useState("");
   const queryClient = useQueryClient();
 
   const { data: requests = [], isLoading } = useQuery({
@@ -26,6 +29,29 @@ export default function EmergencyDispatch() {
     queryFn: () => apiClient.get(endpoints.volunteers, { limit: 200 }),
     refetchInterval: 60000,
   });
+
+  const assignMutation = useMutation({
+    mutationFn: (params) => apiClient.post(`/dispatch/assign`, params),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["emergency-requests"] });
+      queryClient.invalidateQueries({ queryKey: ["volunteers"] });
+      toast.success("Volunteer assigned successfully");
+      setSelectedRequest(null);
+      setSelectedVolunteerId("");
+    },
+    onError: (err) => {
+      toast.error(err.message || "Failed to assign volunteer");
+    }
+  });
+
+  const handleAssign = () => {
+    if (!selectedRequest || !selectedVolunteerId) return;
+
+    assignMutation.mutate({
+      requestId: selectedRequest.requestId || selectedRequest.id,
+      volunteerId: selectedVolunteerId
+    });
+  };
 
   const active = requests.filter(r => ["PENDING", "IN_PROGRESS"].includes(r.status));
   const available = volunteers.filter(v => v.status === "AVAILABLE");
@@ -126,7 +152,33 @@ export default function EmergencyDispatch() {
               <div><p className="text-xs text-slate-400">Priority</p><Badge className={selectedRequest.priority === "P0" ? "bg-red-600" : "bg-slate-600"}>{selectedRequest.priority}</Badge></div>
               <div><p className="text-xs text-slate-400">Status</p><Badge>{selectedRequest.status}</Badge></div>
               <div><p className="text-xs text-slate-400">Location</p><p className="text-sm text-white">{selectedRequest.address || "No address provided"}</p></div>
-              <Button className="w-full bg-blue-600 hover:bg-blue-700 mt-4">Assign Volunteers</Button>
+
+              <div className="pt-4 border-t border-slate-700">
+                <p className="text-xs text-slate-400 mb-2">Assign Volunteer</p>
+                <Select value={selectedVolunteerId} onValueChange={setSelectedVolunteerId}>
+                  <SelectTrigger className="bg-slate-900 border-slate-700 text-slate-200">
+                    <SelectValue placeholder="Select an available volunteer" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-slate-900 border-slate-700">
+                    {available.length === 0 ? (
+                      <SelectItem value="none" disabled>No volunteers available</SelectItem>
+                    ) : (
+                      available.map(v => (
+                        <SelectItem key={v.id} value={v.id} className="text-slate-200">
+                          {v.user?.fullName} ({v.currentLat?.toFixed(2)}, {v.currentLng?.toFixed(2)})
+                        </SelectItem>
+                      ))
+                    )}
+                  </SelectContent>
+                </Select>
+                <Button
+                  onClick={handleAssign}
+                  disabled={!selectedVolunteerId || assignMutation.isPending}
+                  className="w-full bg-blue-600 hover:bg-blue-700 mt-3"
+                >
+                  {assignMutation.isPending ? "Assigning..." : "Confirm Assignment"}
+                </Button>
+              </div>
             </div>
           ) : (
             <div className="text-slate-500 text-sm text-center py-8">Select a request from the list to view details and assign volunteers</div>

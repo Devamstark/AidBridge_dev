@@ -61,12 +61,55 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
         // assign functionality
         if (url.includes('/assign')) {
-            if (req.method !== 'PUT') return methodNotAllowed(res, ['PUT'])
+            if (req.method !== 'PUT' && req.method !== 'POST') return methodNotAllowed(res, ['PUT', 'POST'])
             const body = assignSchema.parse(req.body)
-            const updatedRequest = await (prisma as any).publicHelpRequest.update({ where: { requestId: id }, data: { assignedTo: body.volunteerId, status: 'ASSIGNED' } })
-            const request = await (prisma as any).publicHelpRequest.findUnique({ where: { requestId: id } })
-            if (request) { await prisma.mission.create({ data: { emergencyRequestId: request.id, volunteerId: body.volunteerId, latitude: request.latitude || 0, longitude: request.longitude || 0, status: 'ASSIGNED' } }) }
-            return res.json({ success: true, request: updatedRequest })
+            const requestIdValue = (req.query.requestId as string) || (req.body.requestId as string) || id
+
+            if (!requestIdValue || requestIdValue === 'assign') {
+                return res.status(400).json({ error: 'Request ID is required' })
+            }
+
+            // Check if it's a public request (HelpRequest)
+            if (requestIdValue.startsWith('REQ-')) {
+                const updatedRequest = await (prisma as any).publicHelpRequest.update({
+                    where: { requestId: requestIdValue },
+                    data: { assignedTo: body.volunteerId, status: 'ASSIGNED' }
+                })
+                const request = await (prisma as any).publicHelpRequest.findUnique({ where: { requestId: requestIdValue } })
+                if (request) {
+                    await prisma.mission.create({
+                        data: {
+                            emergencyRequestId: request.id,
+                            volunteerId: body.volunteerId,
+                            latitude: request.latitude || 0,
+                            longitude: request.longitude || 0,
+                            status: 'ASSIGNED'
+                        }
+                    })
+                }
+                return res.json({ success: true, request: updatedRequest })
+            } else {
+                // Internal request (EmergencyRequest)
+                const updatedRequest = await prisma.emergencyRequest.update({
+                    where: { id: requestIdValue },
+                    data: {
+                        status: 'IN_PROGRESS',
+                        assignedVolunteers: {
+                            connect: { id: body.volunteerId }
+                        }
+                    }
+                })
+                await prisma.mission.create({
+                    data: {
+                        emergencyRequestId: updatedRequest.id,
+                        volunteerId: body.volunteerId,
+                        latitude: updatedRequest.latitude || 0,
+                        longitude: updatedRequest.longitude || 0,
+                        status: 'ASSIGNED'
+                    }
+                })
+                return res.json({ success: true, request: updatedRequest })
+            }
         }
 
         // requests functionality
