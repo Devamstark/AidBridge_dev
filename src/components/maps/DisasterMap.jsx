@@ -7,7 +7,10 @@ import { useLocations } from "@/hooks/useLocations";
 import { useVolunteers } from "@/hooks/useVolunteers";
 import { useEmergencyRequests } from "@/hooks/useEmergencyDispatch";
 import { Badge } from "@/components/ui/badge";
-import { AlertTriangle, MapPin, Users, HeartPulse } from "lucide-react";
+import { AlertTriangle, MapPin, Users, HeartPulse, Layers, Map as MapIcon, Settings2, Check } from "lucide-react";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 // Fix for default marker icon issue in React Leaflet
 delete L.Icon.Default.prototype._getIconUrl;
@@ -225,97 +228,96 @@ export default function DisasterMap({ height = "400px", showControls = true }) {
         ))}
       </MapContainer>
 
-      {/* Map Type Controls */}
+      {/* Map Controls (Top-Right) */}
       {showControls && (
-        <div className="absolute top-4 right-4 z-[1000] bg-white rounded-lg shadow-lg border border-slate-200 p-3">
-          <h4 className="text-xs font-semibold text-slate-700 mb-2 flex items-center gap-1">
-            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
-            </svg>
-            Map Type
-          </h4>
-          <div className="space-y-1">
-            {[
-              { key: "street", icon: "🗺️", label: "Street" },
-              { key: "satellite", icon: "🛰️", label: "Satellite" },
-              { key: "terrain", icon: "🏔️", label: "Terrain" },
-              { key: "dark", icon: "🌙", label: "Dark" },
-            ].map(({ key, icon, label }) => (
-              <button
-                key={key}
-                onClick={() => setMapType(key)}
-                className={`w-full text-left px-2 py-1.5 rounded text-xs font-medium transition-colors ${mapType === key
-                  ? "bg-blue-600 text-white"
-                  : "text-slate-600 hover:bg-slate-100"
-                  }`}
+        <div className="absolute top-4 right-4 z-[1000] flex flex-col gap-2">
+          {/* Map Type Popover */}
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                variant="secondary"
+                size="icon"
+                className="w-10 h-10 rounded-full bg-white/90 hover:bg-white shadow-lg border border-slate-200 text-slate-700 hover:text-blue-600 transition-all"
+                title="Change Map Style"
               >
-                <span className="mr-1.5">{icon}</span>
-                {label}
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
+                <MapIcon className="w-5 h-5" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent side="left" align="start" className="w-48 p-2 bg-white/95 backdrop-blur-sm border-slate-200 shadow-xl">
+              <h4 className="px-2 py-1.5 text-xs font-bold text-slate-500 uppercase tracking-wider mb-1 flex items-center gap-2">
+                <Settings2 className="w-3 h-3" /> Map Style
+              </h4>
+              <div className="space-y-1">
+                {[
+                  { key: "street", icon: "🗺️", label: "Street" },
+                  { key: "satellite", icon: "🛰️", label: "Satellite" },
+                  { key: "terrain", icon: "🏔️", label: "Terrain" },
+                  { key: "dark", icon: "🌙", label: "Dark" },
+                ].map(({ key, icon, label }) => (
+                  <button
+                    key={key}
+                    onClick={() => setMapType(key)}
+                    className={cn(
+                      "w-full flex items-center justify-between px-3 py-2 rounded-md text-sm font-medium transition-all",
+                      mapType === key
+                        ? "bg-blue-50 text-blue-700 border border-blue-100"
+                        : "text-slate-600 hover:bg-slate-100 border border-transparent"
+                    )}
+                  >
+                    <span className="flex items-center gap-2">
+                      <span className="text-base">{icon}</span>
+                      {label}
+                    </span>
+                    {mapType === key && <Check className="w-3.5 h-3.5" />}
+                  </button>
+                ))}
+              </div>
+            </PopoverContent>
+          </Popover>
 
-      {/* Layer Controls */}
-      {showControls && (
-        <div className="absolute top-48 right-4 z-[1000] bg-white rounded-lg shadow-lg border border-slate-200 p-3">
-          <h4 className="text-xs font-semibold text-slate-700 mb-2 flex items-center gap-1">
-            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
-            </svg>
-            Layers
-          </h4>
-          <div className="space-y-2">
-            <label className="flex items-center gap-2 text-xs text-slate-600 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={activeLayers.disasters}
-                onChange={(e) => setActiveLayers({ ...activeLayers, disasters: e.target.checked })}
-                className="rounded border-slate-300 text-red-600 focus:ring-red-500"
-              />
-              <span className="flex items-center gap-1">
-                <div className="w-2 h-2 rounded-full bg-red-500" />
-                Disasters
-              </span>
-            </label>
-            <label className="flex items-center gap-2 text-xs text-slate-600 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={activeLayers.locations}
-                onChange={(e) => setActiveLayers({ ...activeLayers, locations: e.target.checked })}
-                className="rounded border-slate-300 text-blue-600 focus:ring-blue-500"
-              />
-              <span className="flex items-center gap-1">
-                <div className="w-2 h-2 rounded-full bg-blue-500" />
-                Locations
-              </span>
-            </label>
-            <label className="flex items-center gap-2 text-xs text-slate-600 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={activeLayers.volunteers}
-                onChange={(e) => setActiveLayers({ ...activeLayers, volunteers: e.target.checked })}
-                className="rounded border-slate-300 text-green-600 focus:ring-green-500"
-              />
-              <span className="flex items-center gap-1">
-                <div className="w-2 h-2 rounded-full bg-green-500" />
-                Volunteers
-              </span>
-            </label>
-            <label className="flex items-center gap-2 text-xs text-slate-600 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={activeLayers.requests}
-                onChange={(e) => setActiveLayers({ ...activeLayers, requests: e.target.checked })}
-                className="rounded border-slate-300 text-amber-500 focus:ring-amber-500"
-              />
-              <span className="flex items-center gap-1">
-                <div className="w-2 h-2 rounded-full bg-amber-500" />
-                Requests
-              </span>
-            </label>
-          </div>
+          {/* Layers Popover */}
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                variant="secondary"
+                size="icon"
+                className="w-10 h-10 rounded-full bg-white/90 hover:bg-white shadow-lg border border-slate-200 text-slate-700 hover:text-green-600 transition-all"
+                title="Toggle Layers"
+              >
+                <Layers className="w-5 h-5" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent side="left" align="start" className="w-48 p-2 bg-white/95 backdrop-blur-sm border-slate-200 shadow-xl">
+              <h4 className="px-2 py-1.5 text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Visible Layers</h4>
+              <div className="space-y-1">
+                {[
+                  { key: 'disasters', label: 'Disasters', color: 'bg-red-500' },
+                  { key: 'locations', label: 'Locations', color: 'bg-blue-500' },
+                  { key: 'volunteers', label: 'Volunteers', color: 'bg-green-500' },
+                  { key: 'requests', label: 'Requests', color: 'bg-amber-500' },
+                ].map(({ key, label, color }) => (
+                  <label
+                    key={key}
+                    className={cn(
+                      "flex items-center justify-between px-3 py-2 rounded-md text-sm font-medium cursor-pointer transition-all",
+                      activeLayers[key] ? "bg-slate-50 text-slate-900" : "text-slate-400 hover:bg-slate-50"
+                    )}
+                  >
+                    <div className="flex items-center gap-2">
+                      <div className={cn("w-2.5 h-2.5 rounded-full shadow-sm", color)} />
+                      {label}
+                    </div>
+                    <input
+                      type="checkbox"
+                      checked={activeLayers[key]}
+                      onChange={(e) => setActiveLayers({ ...activeLayers, [key]: e.target.checked })}
+                      className="rounded border-slate-300 text-blue-600 focus:ring-blue-500 h-4 w-4"
+                    />
+                  </label>
+                ))}
+              </div>
+            </PopoverContent>
+          </Popover>
         </div>
       )}
 
