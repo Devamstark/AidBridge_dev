@@ -12,7 +12,8 @@ export const translations = {
       break_glass: "Break-Glass",
       emergency_dispatch: "Emergency Dispatch",
       volunteer_profiles: "Volunteer Profiles",
-      settings: "Settings"
+      settings: "Settings",
+      reports: "Reports"
     },
     dispatch: {
       title: "Emergency Dispatch",
@@ -196,7 +197,8 @@ export const translations = {
       volunteers: "Voluntarios",
       break_glass: "Emergencia",
       emergency_dispatch: "Despacho de Emergencias",
-      settings: "Configuración"
+      settings: "Configuración",
+      reports: "Informes"
     },
     dispatch: {
       title: "Despacho de Emergencias",

@@ -25,7 +25,8 @@ import {
   ArrowLeft,
   Settings as SettingsIcon,
   Sun,
-  Moon
+  Moon,
+  FileBarChart
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -42,6 +43,7 @@ const navigation = [
   { name: "nav.volunteer_profiles", page: "VolunteerProfiles", icon: UserCheck, roles: ["ADMIN", "COORDINATOR", "VOLUNTEER"] },
   { name: "nav.break_glass", page: "BreakGlass", icon: ShieldAlert, roles: ["ADMIN"] },
   { name: "nav.emergency_dispatch", page: "EmergencyDispatch", icon: AlertTriangle, roles: ["ADMIN", "COORDINATOR"] },
+  { name: "nav.reports", page: "Reports", icon: FileBarChart, roles: ["ADMIN", "COORDINATOR"] },
 ];
 
 function ThemeToggle() {
