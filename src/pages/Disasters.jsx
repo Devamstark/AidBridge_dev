@@ -217,7 +217,7 @@ export default function Disasters() {
         )}
 
         <Dialog open={open} onOpenChange={(v) => { setOpen(v); if (!v) { setEditingId(null); resetForm(); } }}>
-          <DialogContent className="max-w-lg bg-card border">
+          <DialogContent className="max-w-lg bg-card border max-h-[95vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>{editingId ? "Edit Disaster Event" : "New Disaster Event"}</DialogTitle>
               <DialogDescription className="text-muted-foreground">
@@ -274,11 +274,7 @@ export default function Disasters() {
                 </div>
               </div>
               <div>
-                <Label className="text-muted-foreground">Affected Area</Label>
-                <Input value={form.affectedArea} onChange={(e) => setForm({ ...form, affectedArea: e.target.value })} placeholder="City, County, State" />
-              </div>
-              <div>
-                <Label className="text-muted-foreground">Affected Area (Display Name)</Label>
+                <Label className="text-muted-foreground">Affected Area (e.g. City, County)</Label>
                 <Input value={form.affectedArea} onChange={(e) => setForm({ ...form, affectedArea: e.target.value })} placeholder="City, County, State" />
               </div>
               <div>

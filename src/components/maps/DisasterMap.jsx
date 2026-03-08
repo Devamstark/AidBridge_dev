@@ -111,9 +111,10 @@ export default function DisasterMap({ height = "400px", showControls = true }) {
                 center={[disaster.latitude, disaster.longitude]}
                 radius={disaster.radius}
                 pathOptions={{
-                  fillColor: getDisasterColor(disaster.severity),
-                  color: getDisasterColor(disaster.severity),
-                  fillOpacity: 0.15
+                  fillColor: '#ff0000',
+                  color: '#ff0000',
+                  fillOpacity: 0.2,
+                  weight: 2
                 }}
               />
             )}

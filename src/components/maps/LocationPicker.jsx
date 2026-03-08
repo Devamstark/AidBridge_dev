@@ -7,12 +7,19 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 
-// Fix for default marker icon
+// Fix for default marker icon issue
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
     iconRetinaUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon-2x.png",
     iconUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon.png",
     shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png",
+});
+
+const redIcon = new L.DivIcon({
+    className: 'custom-div-icon',
+    html: `<div style="background-color: #ef4444; width: 20px; height: 20px; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); border: 2px solid white; box-shadow: 0 0 5px rgba(0,0,0,0.5);"></div>`,
+    iconSize: [20, 20],
+    iconAnchor: [10, 20],
 });
 
 function MapUpdater({ center, zoom }) {
@@ -34,12 +41,12 @@ function LocationMarker({ position, setPosition, radius }) {
 
     return position ? (
         <>
-            <Marker position={position} />
+            <Marker position={position} icon={redIcon} />
             {radius > 0 && (
                 <Circle
                     center={position}
                     radius={radius}
-                    pathOptions={{ fillColor: '#ef4444', color: '#ef4444', fillOpacity: 0.2 }}
+                    pathOptions={{ fillColor: '#ff0000', color: '#ff0000', fillOpacity: 0.35, weight: 2 }}
                 />
             )}
         </>
