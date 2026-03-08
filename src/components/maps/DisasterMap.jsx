@@ -11,7 +11,6 @@ import { AlertTriangle, MapPin, Users, HeartPulse, Layers, Map as MapIcon, Setti
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import "leaflet.heat";
 
 // Fix for default marker icon issue in React Leaflet
 delete L.Icon.Default.prototype._getIconUrl;
@@ -66,20 +65,24 @@ const getVolunteerColor = (status) => {
   return status === "AVAILABLE" ? "#22c55e" : "#eab308";
 };
 
-// HeatMap component for Leaflet
-function HeatmapLayer({ points }) {
-  const map = L.useMap();
-  useEffect(() => {
-    if (!points || points.length === 0) return;
-    const heat = L.heatLayer(points, {
-      radius: 25,
-      blur: 15,
-      maxZoom: 17,
-      gradient: { 0.4: 'blue', 0.6: 'cyan', 0.7: 'lime', 0.8: 'yellow', 1.0: 'red' }
-    }).addTo(map);
-    return () => map.removeLayer(heat);
-  }, [map, points]);
-  return null;
+// HeatMap component: A safe, React-leafet compatible way to show density
+function HeatmapLayer({ requests }) {
+  if (!requests || requests.length === 0) return null;
+
+  // Group requests by proximity to create larger "hot zones"
+  return requests.filter(r => r.latitude && r.longitude).map((r, i) => (
+    <CircleMarker
+      key={`heat-${i}`}
+      center={[r.latitude, r.longitude]}
+      radius={30}
+      pathOptions={{
+        fillColor: r.priority === 'P0' ? '#ef4444' : '#f59e0b',
+        color: 'transparent',
+        fillOpacity: 0.1,
+      }}
+      interactive={false}
+    />
+  ));
 }
 
 export default function DisasterMap({ height = "400px", showControls = true }) {
@@ -245,13 +248,8 @@ export default function DisasterMap({ height = "400px", showControls = true }) {
           </CircleMarker>
         ))}
         {/* Heat Map Layer */}
-        {activeLayers.heatmap && requests.length > 0 && (
-          <HeatmapLayer
-            points={requests
-              .filter(r => r.latitude && r.longitude)
-              .map(r => [r.latitude, r.longitude, r.priority === 'P0' ? 1.0 : 0.5])
-            }
-          />
+        {activeLayers.heatmap && (
+          <HeatmapLayer requests={requests} />
         )}
       </MapContainer>
 
