@@ -30,6 +30,7 @@ export const PERMISSIONS = {
     Distributions: [ROLES.ADMIN, ROLES.COORDINATOR],
     EmergencyDispatch: [ROLES.ADMIN, ROLES.COORDINATOR],
     BreakGlass: [ROLES.ADMIN],
+    Reports: [ROLES.ADMIN, ROLES.COORDINATOR],
     Settings: [ROLES.ADMIN, ROLES.COORDINATOR, ROLES.VOLUNTEER],
   },
   CREATE: {
