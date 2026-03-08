@@ -9,7 +9,7 @@
   "scripts": {
     "dev": "vite",
     "local": "vite",
-    "build": "prisma generate && prisma migrate deploy && vite build",
+    "build": "prisma generate && node scripts/migrate-with-retry.js && vite build",
     "lint": "eslint . --quiet",
     "lint:fix": "eslint . --fix",
     "typecheck": "tsc -p ./jsconfig.json",
