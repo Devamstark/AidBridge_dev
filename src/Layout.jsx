@@ -193,12 +193,11 @@ function LayoutContent({ children, currentPageName }) {
       )}>
         <div className="flex flex-col h-full">
           {/* Logo */}
-          <div className="h-16 flex items-center gap-3 px-5 border-b border-border">
-            <img
-              src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/698e1e54aa89d7e86672a787/bc0f8c2e6_Gemini_Generated_Image_mubnhrmubnhrmubn.png"
-              alt="AidBridge"
-              className="h-9 w-auto object-contain"
-            />
+          <div className="h-16 flex items-center gap-2 px-5 border-b border-border">
+            <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center shadow-lg shadow-primary/20">
+              <Activity className="w-5 h-5 text-primary-foreground" />
+            </div>
+            <span className="font-bold text-lg tracking-tight text-foreground">AidBridge</span>
             <button className="ml-auto lg:hidden" onClick={() => setSidebarOpen(false)}>
               <X className="w-5 h-5 text-muted-foreground" />
             </button>
@@ -297,11 +296,10 @@ function LayoutContent({ children, currentPageName }) {
               </button>
             )}
             <div className="ml-3 flex items-center gap-2">
-              <img
-                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/698e1e54aa89d7e86672a787/bc0f8c2e6_Gemini_Generated_Image_mubnhrmubnhrmubn.png"
-                alt="AidBridge"
-                className="h-7 w-auto object-contain"
-              />
+              <div className="w-7 h-7 rounded bg-primary flex items-center justify-center">
+                <Activity className="w-4 h-4 text-white" />
+              </div>
+              <span className="font-bold text-md text-foreground">AidBridge</span>
             </div>
           </div>
 

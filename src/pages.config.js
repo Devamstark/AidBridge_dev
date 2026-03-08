@@ -60,6 +60,7 @@ import SurvivorIntake from './pages/SurvivorIntake';
 import Survivors from './pages/Survivors';
 import Unauthorized from './pages/Unauthorized';
 import VolunteerProfiles from './pages/VolunteerProfiles';
+import Volunteers from './pages/Volunteers';
 import Reports from './pages/Reports';
 import __Layout from './Layout.jsx';
 

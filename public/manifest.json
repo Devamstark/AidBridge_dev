@@ -8,9 +8,9 @@
   "theme_color": "#D72836",
   "icons": [
     {
-      "src": "https://base44.com/logo_v2.svg",
+      "src": "favicon.ico",
       "sizes": "any",
-      "type": "image/svg+xml"
+      "type": "image/x-icon"
     }
   ]
 }

@@ -45,8 +45,6 @@ export function sendPushNotification(title, body, options = {}) {
   const send = () => {
     new Notification(title, {
       body,
-      icon: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/698e1e54aa89d7e86672a787/bc0f8c2e6_Gemini_Generated_Image_mubnhrmubnhrmubn.png",
-      badge: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/698e1e54aa89d7e86672a787/bc0f8c2e6_Gemini_Generated_Image_mubnhrmubnhrmubn.png",
       tag: options.tag || "aidbridge-alert",
       requireInteraction: options.requireInteraction ?? true,
       ...options,
