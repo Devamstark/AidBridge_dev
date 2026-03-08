@@ -124,41 +124,41 @@ export default function Reports() {
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
                 <div className="lg:col-span-1 space-y-6">
-                    <Card className="border-slate-800 bg-slate-900/50 backdrop-blur-sm">
+                    <Card className="border border-border/50 bg-card/60 backdrop-blur-md shadow-sm">
                         <CardHeader>
-                            <CardTitle className="flex items-center gap-2 text-lg">
-                                <Settings2 className="w-5 h-5 text-blue-400" /> Report Configuration
+                            <CardTitle className="flex items-center gap-2 text-lg font-bold">
+                                <SettingsIcon className="w-5 h-5 text-primary" /> Report Configuration
                             </CardTitle>
                             <CardDescription>Select the timeframe for the automated scan.</CardDescription>
                         </CardHeader>
                         <CardContent className="space-y-4">
                             <Tabs defaultValue="daily" onValueChange={setReportType} className="w-full">
-                                <TabsList className="grid grid-cols-3 w-full bg-slate-950/50 border border-slate-800">
-                                    <TabsTrigger value="daily">Daily</TabsTrigger>
-                                    <TabsTrigger value="weekly">Weekly</TabsTrigger>
-                                    <TabsTrigger value="monthly">Monthly</TabsTrigger>
+                                <TabsList className="grid grid-cols-3 w-full bg-muted/50 p-1">
+                                    <TabsTrigger value="daily" className="text-xs">Daily</TabsTrigger>
+                                    <TabsTrigger value="weekly" className="text-xs">Weekly</TabsTrigger>
+                                    <TabsTrigger value="monthly" className="text-xs">Monthly</TabsTrigger>
                                 </TabsList>
                             </Tabs>
 
-                            <div className="pt-4 space-y-2">
-                                <Button onClick={handleSummarize} className="w-full bg-blue-600 hover:bg-blue-700 font-semibold gap-2">
+                            <div className="pt-4 space-y-3">
+                                <Button onClick={handleSummarize} className="w-full bg-primary hover:bg-primary/90 font-semibold gap-2 h-11 shadow-md shadow-primary/20">
                                     <Activity className="w-4 h-4" /> Summarize Operation
                                 </Button>
-                                <Button onClick={exportPDF} variant="outline" className="w-full border-slate-700 hover:bg-slate-800 gap-2">
+                                <Button onClick={exportPDF} variant="outline" className="w-full border-border hover:bg-accent gap-2 h-11">
                                     <Download className="w-4 h-4" /> Export Professional PDF
                                 </Button>
                             </div>
                         </CardContent>
                     </Card>
 
-                    <Card className="border-slate-800 bg-slate-900/50">
-                        <CardHeader>
-                            <CardTitle className="text-md font-semibold text-slate-400 flex items-center gap-2">
+                    <Card className="border-border/50 bg-card/60 backdrop-blur-sm shadow-sm">
+                        <CardHeader className="pb-2">
+                            <CardTitle className="text-sm font-semibold text-muted-foreground flex items-center gap-2 uppercase tracking-wider">
                                 <Info className="w-4 h-4" /> Intelligence Note
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <p className="text-sm text-slate-500 italic">
+                            <p className="text-xs text-muted-foreground leading-relaxed">
                                 SITREPs are generated using logic-based extraction from active operation data.
                                 PDF exports are formatted according to standard emergency management protocols.
                             </p>
@@ -167,26 +167,32 @@ export default function Reports() {
                 </div>
 
                 <div className="lg:col-span-2">
-                    <Card className="h-full border-slate-800 bg-slate-950/50 shadow-2xl overflow-hidden flex flex-col">
-                        <CardHeader className="border-b border-slate-800 bg-slate-900/30">
+                    <Card className="h-full border border-border/50 bg-card shadow-xl overflow-hidden flex flex-col min-h-[500px]">
+                        <CardHeader className="border-b border-border/50 bg-muted/20 pb-4">
                             <div className="flex items-center justify-between">
-                                <div>
-                                    <CardTitle className="text-xl">Automated SITREP</CardTitle>
-                                    <CardDescription className="flex items-center gap-2 mt-1">
-                                        <Clock className="w-3 h-3" /> Real-time status report generated from operational data
+                                <div className="space-y-1">
+                                    <CardTitle className="text-xl font-bold tracking-tight">Operation SITREP</CardTitle>
+                                    <CardDescription className="flex items-center gap-2 text-xs">
+                                        <Clock className="w-3 h-3 text-primary" /> Generated overview based on current system data
                                     </CardDescription>
                                 </div>
-                                <Badge variant="outline" className="h-6 gap-1 border-blue-500/30 text-blue-400">
-                                    <Calendar className="w-3 h-3" /> {reportType.toUpperCase()}
+                                <Badge className="rounded-full px-3 bg-primary/10 text-primary border-primary/20 flex gap-1.5 items-center">
+                                    <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+                                    {reportType.toUpperCase()}
                                 </Badge>
                             </div>
                         </CardHeader>
-                        <CardContent className="flex-1 p-0 relative">
-                            <div className="absolute inset-0 p-6 overflow-y-auto font-mono text-sm leading-relaxed text-slate-300 whitespace-pre-wrap">
-                                {summary || (
-                                    <div className="h-full flex flex-col items-center justify-center text-slate-500 animate-pulse">
-                                        <FileText className="w-16 h-16 mb-4 opacity-10" />
-                                        <p>Click "Summarize Operation" to generate report</p>
+                        <CardContent className="flex-1 p-0 relative overflow-hidden bg-slate-50/50 dark:bg-slate-900/20">
+                            <div className="absolute inset-0 p-10 overflow-y-auto font-mono text-[13px] leading-[1.8] text-foreground/90 whitespace-pre-wrap selection:bg-primary/20">
+                                {summary ? (
+                                    <div className="animate-in fade-in duration-500">
+                                        {summary}
+                                    </div>
+                                ) : (
+                                    <div className="h-full flex flex-col items-center justify-center text-muted-foreground/40">
+                                        <FileText className="w-20 h-20 mb-6 opacity-20" />
+                                        <p className="font-sans text-sm font-medium">Ready to generate report</p>
+                                        <p className="font-sans text-xs mt-1 text-center max-w-[200px]">Click the summarize button to analyze active operational data</p>
                                     </div>
                                 )}
                             </div>
@@ -199,7 +205,7 @@ export default function Reports() {
 }
 
 // Helper icons for the config card
-function Settings2(props) {
+function SettingsIcon(props) {
     return (
         <svg
             {...props}
@@ -213,10 +219,8 @@ function Settings2(props) {
             strokeLinecap="round"
             strokeLinejoin="round"
         >
-            <path d="M20 7h-9" />
-            <path d="M14 17H5" />
-            <circle cx="17" cy="17" r="3" />
-            <circle cx="7" cy="7" r="3" />
+            <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.1a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.1a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" />
+            <circle cx="12" cy="12" r="3" />
         </svg>
     );
 }
