@@ -18,6 +18,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Card, CardContent } from "@/components/ui/card";
 import { Activity, Plus, Search } from "lucide-react";
 import DisasterCard from "@/components/disasters/DisasterCard";
+import LocationPicker from "@/components/maps/LocationPicker";
 
 const DISASTER_TYPES = ["tornado", "hurricane", "flood", "earthquake", "conflict", "famine", "tsunami", "wildfire", "other"];
 
@@ -35,7 +36,8 @@ export default function Disasters() {
     description: "",
     estimatedAffected: 0,
     latitude: 0,
-    longitude: 0
+    longitude: 0,
+    radius: 10
   });
   const queryClient = useQueryClient();
 
@@ -140,7 +142,8 @@ export default function Disasters() {
     description: "",
     estimatedAffected: 0,
     latitude: 0,
-    longitude: 0
+    longitude: 0,
+    radius: 10
   });
 
   const filtered = disasters.filter(d =>
@@ -203,6 +206,7 @@ export default function Disasters() {
                     estimatedAffected: disaster.estimatedAffected || 0,
                     latitude: disaster.latitude || 0,
                     longitude: disaster.longitude || 0,
+                    radius: disaster.radius || 10,
                   });
                   setOpen(true);
                 }}
@@ -245,14 +249,28 @@ export default function Disasters() {
                   </Select>
                 </div>
               </div>
+              <div className="space-y-2">
+                <Label className="text-muted-foreground">Disaster Location & Impact Area</Label>
+                <LocationPicker
+                  value={{ lat: form.latitude, lng: form.longitude, radius: form.radius }}
+                  onChange={(val) => setForm({ ...form, latitude: val.lat, longitude: val.lng, radius: val.radius })}
+                  height="250px"
+                />
+              </div>
+
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label className="text-muted-foreground">Latitude</Label>
-                  <Input type="number" step="any" value={form.latitude} onChange={(e) => setForm({ ...form, latitude: parseFloat(e.target.value) || 0 })} placeholder="e.g. 27.95" />
+                  <Label className="text-muted-foreground">Impact Radius (meters)</Label>
+                  <Input
+                    type="number"
+                    value={form.radius}
+                    onChange={(e) => setForm({ ...form, radius: parseFloat(e.target.value) || 0 })}
+                    placeholder="e.g. 10"
+                  />
                 </div>
                 <div>
-                  <Label className="text-muted-foreground">Longitude</Label>
-                  <Input type="number" step="any" value={form.longitude} onChange={(e) => setForm({ ...form, longitude: parseFloat(e.target.value) || 0 })} placeholder="e.g. -82.45" />
+                  <Label className="text-muted-foreground">Estimated People Affected</Label>
+                  <Input type="number" value={form.estimatedAffected} onChange={(e) => setForm({ ...form, estimatedAffected: parseInt(e.target.value) || 0 })} />
                 </div>
               </div>
               <div>
@@ -260,8 +278,8 @@ export default function Disasters() {
                 <Input value={form.affectedArea} onChange={(e) => setForm({ ...form, affectedArea: e.target.value })} placeholder="City, County, State" />
               </div>
               <div>
-                <Label className="text-muted-foreground">Estimated People Affected</Label>
-                <Input type="number" value={form.estimatedAffected} onChange={(e) => setForm({ ...form, estimatedAffected: parseInt(e.target.value) || 0 })} />
+                <Label className="text-muted-foreground">Affected Area (Display Name)</Label>
+                <Input value={form.affectedArea} onChange={(e) => setForm({ ...form, affectedArea: e.target.value })} placeholder="City, County, State" />
               </div>
               <div>
                 <Label className="text-muted-foreground">Description</Label>

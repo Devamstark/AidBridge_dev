@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { MapContainer, TileLayer, Marker, Popup, CircleMarker } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup, CircleMarker, Circle } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import { useDisasters } from "@/hooks/useDisasters";
@@ -105,25 +105,40 @@ export default function DisasterMap({ height = "400px", showControls = true }) {
 
         {/* Disaster Markers */}
         {activeLayers.disasters && disasters.filter(d => d.latitude && d.longitude).map((disaster) => (
-          <CircleMarker
-            key={disaster.id}
-            center={[disaster.latitude, disaster.longitude]}
-            radius={(disaster.severity || 1) * 8}
-            fillColor={getDisasterColor(disaster.severity)}
-            color="#fff"
-            weight={2}
-            opacity={1}
-            fillOpacity={0.6}
-          >
-            <Popup>
-              <div className="p-2 min-w-[200px]">
-                <h3 className="font-semibold text-slate-900">{disaster.name}</h3>
-                <p className="text-sm text-slate-600 capitalize">Type: {disaster.disasterType}</p>
-                <p className="text-sm text-slate-600">Severity: {disaster.severity}/5</p>
-                <p className="text-xs text-slate-400 mt-1">{disaster.affectedArea}</p>
-              </div>
-            </Popup>
-          </CircleMarker>
+          <React.Fragment key={disaster.id}>
+            {disaster.radius > 0 && (
+              <Circle
+                center={[disaster.latitude, disaster.longitude]}
+                radius={disaster.radius}
+                pathOptions={{
+                  fillColor: getDisasterColor(disaster.severity),
+                  color: getDisasterColor(disaster.severity),
+                  fillOpacity: 0.15
+                }}
+              />
+            )}
+            <CircleMarker
+              center={[disaster.latitude, disaster.longitude]}
+              radius={(disaster.severity || 1) * 8}
+              fillColor={getDisasterColor(disaster.severity)}
+              color="#fff"
+              weight={2}
+              opacity={1}
+              fillOpacity={0.6}
+            >
+              <Popup>
+                <div className="p-2 min-w-[200px]">
+                  <h3 className="font-semibold text-slate-900">{disaster.name}</h3>
+                  <p className="text-sm text-slate-600 capitalize">Type: {disaster.disasterType}</p>
+                  <p className="text-sm text-slate-600">Severity: {disaster.severity}/5</p>
+                  <p className="text-xs text-slate-400 mt-1">{disaster.affectedArea}</p>
+                  {disaster.radius > 0 && (
+                    <p className="text-xs text-slate-500 mt-1 italic">Impact Radius: {disaster.radius}m</p>
+                  )}
+                </div>
+              </Popup>
+            </CircleMarker>
+          </React.Fragment>
         ))}
 
         {/* Emergency Request Markers */}
