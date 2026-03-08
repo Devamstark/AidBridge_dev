@@ -11,6 +11,7 @@ import { AlertTriangle, MapPin, Users, HeartPulse, Layers, Map as MapIcon, Setti
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import "leaflet.heat";
 
 // Fix for default marker icon issue in React Leaflet
 delete L.Icon.Default.prototype._getIconUrl;
@@ -65,6 +66,22 @@ const getVolunteerColor = (status) => {
   return status === "AVAILABLE" ? "#22c55e" : "#eab308";
 };
 
+// HeatMap component for Leaflet
+function HeatmapLayer({ points }) {
+  const map = L.useMap();
+  useEffect(() => {
+    if (!points || points.length === 0) return;
+    const heat = L.heatLayer(points, {
+      radius: 25,
+      blur: 15,
+      maxZoom: 17,
+      gradient: { 0.4: 'blue', 0.6: 'cyan', 0.7: 'lime', 0.8: 'yellow', 1.0: 'red' }
+    }).addTo(map);
+    return () => map.removeLayer(heat);
+  }, [map, points]);
+  return null;
+}
+
 export default function DisasterMap({ height = "400px", showControls = true }) {
   const [mapType, setMapType] = useState("street"); // street, satellite, dark, terrain
   const [activeLayers, setActiveLayers] = useState({
@@ -72,6 +89,7 @@ export default function DisasterMap({ height = "400px", showControls = true }) {
     locations: true,
     volunteers: true,
     requests: true,
+    heatmap: false,
   });
 
   const { data: disasters = [] } = useDisasters({ limit: 100 });
@@ -226,6 +244,15 @@ export default function DisasterMap({ height = "400px", showControls = true }) {
             </Popup>
           </CircleMarker>
         ))}
+        {/* Heat Map Layer */}
+        {activeLayers.heatmap && requests.length > 0 && (
+          <HeatmapLayer
+            points={requests
+              .filter(r => r.latitude && r.longitude)
+              .map(r => [r.latitude, r.longitude, r.priority === 'P0' ? 1.0 : 0.5])
+            }
+          />
+        )}
       </MapContainer>
 
       {/* Map Controls (Top-Right) */}
@@ -295,6 +322,7 @@ export default function DisasterMap({ height = "400px", showControls = true }) {
                   { key: 'locations', label: 'Locations', color: 'bg-blue-500' },
                   { key: 'volunteers', label: 'Volunteers', color: 'bg-green-500' },
                   { key: 'requests', label: 'Requests', color: 'bg-amber-500' },
+                  { key: 'heatmap', label: 'Request Heatmap', color: 'bg-gradient-to-r from-blue-500 via-yellow-500 to-red-500' },
                 ].map(({ key, label, color }) => (
                   <label
                     key={key}

@@ -11,6 +11,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { format } from "date-fns";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
+import { rankVolunteers } from "@/lib/map-utils";
+import { MapPin, Star, Award, Navigation } from "lucide-react";
 
 export default function EmergencyDispatch() {
   const { t } = useTranslation();
@@ -69,6 +71,11 @@ export default function EmergencyDispatch() {
   const active = requests.filter(r => ["PENDING", "IN_PROGRESS"].includes(r.status));
   const available = volunteers.filter(v => v.status === "AVAILABLE");
   const critical = requests.filter(r => r.priority === "P0");
+
+  // Smart Ranking Logic
+  const rankedVolunteers = selectedRequest
+    ? rankVolunteers(selectedRequest, available)
+    : available;
 
   return (
     <div>
@@ -205,17 +212,51 @@ export default function EmergencyDispatch() {
                     <SelectValue placeholder="Select an available volunteer" />
                   </SelectTrigger>
                   <SelectContent className="bg-background border">
-                    {available.length === 0 ? (
+                    {rankedVolunteers.length === 0 ? (
                       <SelectItem value="none" disabled>No volunteers available</SelectItem>
                     ) : (
-                      available.map(v => (
+                      rankedVolunteers.map(v => (
                         <SelectItem key={v.id} value={v.id} className="text-foreground">
-                          {v.user?.fullName} {v.currentLat ? `(${v.currentLat.toFixed(2)}, ${v.currentLng.toFixed(2)})` : "(No location)"}
+                          <div className="flex items-center justify-between w-full">
+                            <span className="flex items-center gap-2">
+                              {v.matchScore >= 80 && <Star className="w-3 h-3 text-amber-500 fill-amber-500" />}
+                              {v.user?.fullName}
+                            </span>
+                            <span className="text-[10px] text-muted-foreground ml-2">
+                              {v.distance ? `${v.distance}km away` : ""} {v.matchScore ? `• ${v.matchScore}% match` : ""}
+                            </span>
+                          </div>
                         </SelectItem>
                       ))
                     )}
                   </SelectContent>
                 </Select>
+
+                {/* Match Analysis Badge */}
+                {selectedVolunteerId && rankedVolunteers.find(v => v.id === selectedVolunteerId) && (
+                  <div className="mt-2 p-2 bg-secondary/30 rounded border border-dashed border-primary/20 animate-in fade-in slide-in-from-top-1">
+                    {(() => {
+                      const v = rankedVolunteers.find(v => v.id === selectedVolunteerId);
+                      return (
+                        <div className="space-y-1">
+                          <div className="flex items-center justify-between">
+                            <span className="text-[10px] font-bold text-primary uppercase">Intelligence Report</span>
+                            <Badge variant="outline" className="text-[10px] h-4 bg-primary/5">{v.matchScore}% Match</Badge>
+                          </div>
+                          <div className="grid grid-cols-2 gap-2 mt-1">
+                            <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
+                              <Navigation className="w-3 h-3" /> {v.distance}km away
+                            </div>
+                            <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
+                              <Award className="w-3 h-3" /> {v.experienceLevel || 'Standard'}
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })()}
+                  </div>
+                )}
+
                 <Button
                   onClick={handleAssign}
                   disabled={!selectedVolunteerId || assignMutation.isPending}
