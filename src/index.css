@@ -24,7 +24,13 @@
     --border: 214 32% 91%;
     --input: 214 32% 91%;
     --ring: 221 83% 53%;
-    --radius: 0.5rem;
+    --radius: 1rem; /* Softer corners */
+    
+    /* Premium Gradients */
+    --gradient-primary: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    --gradient-danger: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    --glass-bg: rgba(255, 255, 255, 0.7);
+    --glass-border: rgba(255, 255, 255, 0.3);
     
     /* Charts - High contrast */
     --chart-1: 221 83% 53%;
@@ -55,6 +61,13 @@
     --border: 217 33% 17%;
     --input: 217 33% 17%;
     --ring: 224 76% 48%;
+    --radius: 1rem;
+    
+    /* Premium Gradients (Dark) */
+    --gradient-primary: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+    --gradient-danger: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+    --glass-bg: rgba(15, 23, 42, 0.7);
+    --glass-border: rgba(255, 255, 255, 0.1);
     
     /* Charts - Bright for dark mode */
     --chart-1: 217 91% 60%;
@@ -73,6 +86,34 @@
   body {
     @apply bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
+
+@layer utilities {
+  .glass {
+    @apply backdrop-blur-md border;
+    background-color: var(--glass-bg);
+    border-color: var(--glass-border);
+  }
+
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-primary to-blue-600;
+  }
+
+  .mesh-bg {
+    background-color: hsla(222,47%,98%,1);
+    background-image: 
+      radial-gradient(at 0% 0%, hsla(210,100%,93%,1) 0, transparent 50%), 
+      radial-gradient(at 50% 0%, hsla(221,83%,93%,1) 0, transparent 50%), 
+      radial-gradient(at 100% 0%, hsla(210,100%,93%,1) 0, transparent 50%);
+  }
+
+  .dark .mesh-bg {
+    background-color: hsla(222,47%,11%,1);
+    background-image: 
+      radial-gradient(at 0% 0%, hsla(221,83%,15%,1) 0, transparent 50%), 
+      radial-gradient(at 50% 0%, hsla(221,83%,12%,1) 0, transparent 50%), 
+      radial-gradient(at 100% 0%, hsla(221,83%,15%,1) 0, transparent 50%);
   }
 }
 

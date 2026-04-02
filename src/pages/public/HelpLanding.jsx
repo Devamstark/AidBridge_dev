@@ -2,109 +2,183 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { AlertTriangle, FileText, Search, Phone, ShieldAlert } from "lucide-react";
+import { AlertTriangle, FileText, Search, Phone, ShieldAlert, Heart, Activity, Globe } from "lucide-react";
+import { motion } from "framer-motion";
+
+const container = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1
+    }
+  }
+};
+
+const item = {
+  hidden: { opacity: 0, y: 20 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } }
+};
 
 export default function HelpLanding() {
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="border-b bg-card">
-        <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <ShieldAlert className="w-8 h-8 text-primary" />
-            <div>
-              <h1 className="text-xl font-bold">AidBridge</h1>
-              <p className="text-xs text-muted-foreground">Emergency Response</p>
+    <div className="min-h-screen mesh-bg selection:bg-primary/20 selection:text-primary">
+      {/* Navigation */}
+      <nav className="sticky top-0 z-50 glass border-b shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
+          <motion.div 
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            className="flex items-center gap-3"
+          >
+            <div className="p-2 rounded-xl bg-primary/10">
+              <ShieldAlert className="w-8 h-8 text-primary" />
             </div>
-          </div>
-          <a href="tel:911" className="flex items-center gap-2 text-primary font-semibold">
-            <Phone className="w-4 h-4" />
-            <span className="hidden sm:inline">911</span>
-          </a>
+            <div>
+              <h1 className="text-xl font-bold tracking-tight">AidBridge</h1>
+              <p className="text-[10px] uppercase font-bold tracking-widest text-muted-foreground/60">Unified Disaster Response</p>
+            </div>
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+          >
+            <a href="tel:911" className="flex items-center gap-2 px-4 py-2 rounded-full bg-destructive/10 text-destructive hover:bg-destructive/20 transition-all font-bold animate-pulse">
+              <Phone className="w-4 h-4" />
+              <span>Emergency 911</span>
+            </a>
+          </motion.div>
         </div>
-      </header>
+      </nav>
 
-      {/* Hero */}
-      <section className="py-12 sm:py-16">
-        <div className="max-w-7xl mx-auto px-4 text-center">
-          <div className="inline-flex items-center gap-2 bg-destructive/10 text-destructive px-4 py-2 rounded-full text-sm font-medium mb-6">
-            <AlertTriangle className="w-4 h-4" />
-            Need immediate help? Request assistance now
-          </div>
-          
-          <h2 className="text-3xl sm:text-4xl font-bold mb-4">
-            Get Help When Disaster Strikes
+      {/* Hero Section */}
+      <section className="relative overflow-hidden pt-20 pb-32">
+        <div className="max-w-7xl mx-auto px-4 relative z-10">
+          <motion.div 
+            variants={container}
+            initial="hidden"
+            animate="show"
+            className="text-center"
+          >
+            <motion.div 
+              variants={item}
+              className="inline-flex items-center gap-2 bg-rose-500/10 text-rose-600 dark:text-rose-400 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider mb-8 border border-rose-500/20"
+            >
+              <Activity className="w-3.5 h-3.5" />
+              Live Operations Dashboard Active
+            </motion.div>
+            
+            <motion.h2 
+              variants={item}
+              className="text-5xl sm:text-7xl font-extrabold mb-6 tracking-tight leading-tight"
+            >
+              Real-time Help in <br />
+              <span className="text-gradient">Disaster Situations.</span>
+            </motion.h2>
+            
+            <motion.p 
+              variants={item}
+              className="text-xl text-muted-foreground max-w-2xl mx-auto mb-12 leading-relaxed"
+            >
+              AidBridge connects survivors with critical emergency services instantly. 
+              No bureaucracy, just immediate humanitarian logistics.
+            </motion.p>
+
+            {/* Action Cards */}
+            <motion.div 
+              variants={container}
+              initial="hidden"
+              animate="show"
+              className="grid md:grid-cols-3 gap-8 mt-12"
+            >
+              <motion.div variants={item}>
+                <Card className="group glass border-none shadow-xl hover:shadow-2xl hover:shadow-rose-500/10 transition-all duration-300 transform hover:-translate-y-2">
+                  <CardContent className="pt-8 pb-8 px-8">
+                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-rose-500 to-red-600 flex items-center justify-center mb-6 shadow-lg shadow-red-500/30 group-hover:scale-110 transition-transform">
+                      <AlertTriangle className="w-8 h-8 text-white" />
+                    </div>
+                    <h3 className="text-2xl font-bold mb-3">Critical Help</h3>
+                    <p className="text-muted-foreground mb-8 text-balance">
+                      Immediate extraction, medical aid, or emergency supplies for active danger zones.
+                    </p>
+                    <Link to="/help/request">
+                      <Button className="w-full h-12 text-lg font-bold bg-gradient-to-r from-rose-500 to-red-600 hover:shadow-lg hover:shadow-red-500/40 transition-all border-none">
+                        Rescue Request
+                      </Button>
+                    </Link>
+                  </CardContent>
+                </Card>
+              </motion.div>
+
+              <motion.div variants={item}>
+                <Card className="group glass border-none shadow-xl hover:shadow-2xl hover:shadow-blue-500/10 transition-all duration-300 transform hover:-translate-y-2">
+                  <CardContent className="pt-8 pb-8 px-8">
+                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center mb-6 shadow-lg shadow-blue-500/30 group-hover:scale-110 transition-transform">
+                      <Globe className="w-8 h-8 text-white" />
+                    </div>
+                    <h3 className="text-2xl font-bold mb-3">Survivor Portal</h3>
+                    <p className="text-muted-foreground mb-8 text-balance">
+                      Register as a survivor to receive government grants, shelter, and long-term aid.
+                    </p>
+                    <Link to="/register">
+                      <Button className="w-full h-12 text-lg font-bold bg-gradient-to-r from-blue-500 to-indigo-600 hover:shadow-lg hover:shadow-blue-500/40 transition-all border-none">
+                        Register Now
+                      </Button>
+                    </Link>
+                  </CardContent>
+                </Card>
+              </motion.div>
+
+              <motion.div variants={item}>
+                <Card className="group glass border-none shadow-xl hover:shadow-2xl hover:shadow-teal-500/10 transition-all duration-300 transform hover:-translate-y-2">
+                  <CardContent className="pt-8 pb-8 px-8">
+                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-teal-500 to-emerald-600 flex items-center justify-center mb-6 shadow-lg shadow-teal-500/30 group-hover:scale-110 transition-transform">
+                      <Search className="w-8 h-8 text-white" />
+                    </div>
+                    <h3 className="text-2xl font-bold mb-3">Track Status</h3>
+                    <p className="text-muted-foreground mb-8 text-balance">
+                      Live GPS tracking and status updates for your rescue or relief request.
+                    </p>
+                    <Link to="/track">
+                      <Button variant="outline" className="w-full h-12 text-lg font-bold border-2 hover:bg-muted/50 transition-all">
+                        Check Status
+                      </Button>
+                    </Link>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            </motion.div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Trust Quote */}
+      <section className="py-20 bg-primary/5">
+        <div className="max-w-4xl mx-auto px-4 text-center">
+          <Heart className="w-12 h-12 text-primary/40 mx-auto mb-6" />
+          <h2 className="text-2xl font-medium italic text-muted-foreground/80 leading-relaxed">
+            "Direct communication between survivors and responders shouldn't be a luxury; it's a lifeline. AidBridge transforms chaos into coordination."
           </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-8">
-            Connect with emergency responders and track your requests - no login required
-          </p>
-
-          {/* Action Cards */}
-          <div className="grid md:grid-cols-3 gap-6">
-            <Card>
-              <CardContent className="pt-6">
-                <div className="w-12 h-12 rounded-lg bg-destructive/10 flex items-center justify-center mb-4">
-                  <AlertTriangle className="w-6 h-6 text-destructive" />
-                </div>
-                <h3 className="text-lg font-semibold mb-2">Emergency Help</h3>
-                <p className="text-sm text-muted-foreground mb-4">
-                  Request immediate assistance for medical, rescue, shelter, or food
-                </p>
-                <Link to="/help/request">
-                  <Button className="w-full bg-destructive hover:bg-destructive/90">
-                    Request Help
-                  </Button>
-                </Link>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardContent className="pt-6">
-                <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
-                  <FileText className="w-6 h-6 text-primary" />
-                </div>
-                <h3 className="text-lg font-semibold mb-2">Register as Survivor</h3>
-                <p className="text-sm text-muted-foreground mb-4">
-                  Register yourself and family for long-term assistance
-                </p>
-                <Link to="/register">
-                  <Button className="w-full bg-primary hover:bg-primary/90">
-                    Register Now
-                  </Button>
-                </Link>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardContent className="pt-6">
-                <div className="w-12 h-12 rounded-lg bg-success/10 flex items-center justify-center mb-4">
-                  <Search className="w-6 h-6 text-success" />
-                </div>
-                <h3 className="text-lg font-semibold mb-2">Track Request</h3>
-                <p className="text-sm text-muted-foreground mb-4">
-                  Check the status of your help request or registration
-                </p>
-                <Link to="/track">
-                  <Button className="w-full bg-secondary hover:bg-secondary/80 text-secondary-foreground">
-                    Track Status
-                  </Button>
-                </Link>
-              </CardContent>
-            </Card>
-          </div>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="border-t bg-card py-8 mt-12">
-        <div className="max-w-7xl mx-auto px-4 text-center">
-          <Link to="/login">
-            <Button variant="outline" className="mb-4">
-              Staff Login
-            </Button>
-          </Link>
-          <p className="text-sm text-muted-foreground">
-            For life-threatening emergencies, call <a href="tel:911" className="text-primary font-semibold">911</a>
+      <footer className="py-12 border-t glass">
+        <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-8">
+          <div className="flex items-center gap-3 opacity-60 grayscale hover:grayscale-0 transition-all">
+            <ShieldAlert className="w-6 h-6 text-primary" />
+            <span className="font-bold">AidBridge Platform</span>
+          </div>
+          
+          <div className="flex gap-8 text-sm font-medium text-muted-foreground">
+            <Link to="/login" className="hover:text-primary transition-colors">Responder Login</Link>
+            <a href="#" className="hover:text-primary transition-colors">Privacy Policy</a>
+            <a href="#" className="hover:text-primary transition-colors">Terms of Service</a>
+          </div>
+
+          <p className="text-xs text-muted-foreground text-center md:text-right">
+            © 2026 AidBridge Foundation. <br />
+            Emergency Protocol: Call 911 immediately if in mortal danger.
           </p>
         </div>
       </footer>
