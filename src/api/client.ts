@@ -2,7 +2,7 @@ import axios, { AxiosInstance, AxiosError } from 'axios'
 import * as mock from '@/lib/mockData'
 
 const API_BASE_URL = (import.meta as any).env.VITE_API_URL || '/api'
-const USE_MOCK_DATA = false // Set to true for local testing without backend
+const USE_MOCK_DATA = true // Set to true for local testing without backend
 
 // In-memory storage for mock data
 const mockStorage = {
@@ -40,6 +40,19 @@ const mockApi = {
   async post(endpoint: string, data?: any) {
     await new Promise(resolve => setTimeout(resolve, 500))
     console.log('Mock POST to', endpoint, data)
+
+    if (endpoint.includes('/auth/login')) {
+      const { email, password } = data;
+      // Find user by email and password
+      const user = Object.values(mock.mockUsers).find(u => u.email === email && u.password === password);
+      if (user) {
+        return {
+          token: `mock_token_${user.role}_${Date.now()}`,
+          user
+        };
+      }
+      throw { status: 401, message: 'Invalid credentials' };
+    }
 
     if (endpoint.includes('/disasters')) {
       const newDisaster = {
