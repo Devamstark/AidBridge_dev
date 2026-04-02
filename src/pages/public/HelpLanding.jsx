@@ -31,8 +31,8 @@ export default function HelpLanding() {
             animate={{ opacity: 1, x: 0 }}
             className="flex items-center gap-3"
           >
-            <div className="p-2 rounded-xl bg-primary/10">
-              <ShieldAlert className="w-8 h-8 text-primary" />
+            <div className="p-1 rounded-xl bg-white shadow-sm border border-slate-100 overflow-hidden">
+              <img src="/logo.png" alt="AidBridge Logo" className="w-10 h-10 object-contain" />
             </div>
             <div>
               <h1 className="text-xl font-bold tracking-tight">AidBridge</h1>
@@ -165,15 +165,15 @@ export default function HelpLanding() {
       {/* Footer */}
       <footer className="py-12 border-t glass">
         <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-8">
-          <div className="flex items-center gap-3 opacity-60 grayscale hover:grayscale-0 transition-all">
-            <ShieldAlert className="w-6 h-6 text-primary" />
+          <div className="flex items-center gap-3 opacity-80 hover:opacity-100 transition-all">
+            <img src="/logo.png" alt="AidBridge Logo" className="w-8 h-8 object-contain" />
             <span className="font-bold">AidBridge Platform</span>
           </div>
           
           <div className="flex gap-8 text-sm font-medium text-muted-foreground">
             <Link to="/login" className="hover:text-primary transition-colors">Responder Login</Link>
-            <a href="#" className="hover:text-primary transition-colors">Privacy Policy</a>
-            <a href="#" className="hover:text-primary transition-colors">Terms of Service</a>
+            <Link to="/privacy" className="hover:text-primary transition-colors">Privacy Policy</Link>
+            <Link to="/terms" className="hover:text-primary transition-colors">Terms of Service</Link>
           </div>
 
           <p className="text-xs text-muted-foreground text-center md:text-right">

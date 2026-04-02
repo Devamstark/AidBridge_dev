@@ -13,6 +13,8 @@ import HelpLanding from './pages/public/HelpLanding';
 import HelpRequestForm from './pages/public/HelpRequestForm';
 import SurvivorRegister from './pages/public/SurvivorRegister';
 import TrackRequest from './pages/public/TrackRequest';
+import PrivacyPolicy from './pages/public/PrivacyPolicy';
+import TermsOfService from './pages/public/TermsOfService';
 
 const { Pages, Layout, mainPage } = pagesConfig;
 const mainPageKey = mainPage ?? Object.keys(Pages)[0];
@@ -74,6 +76,8 @@ const AuthenticatedApp = () => {
       <Route path="/help/request" element={<HelpRequestForm />} />
       <Route path="/register" element={<SurvivorRegister />} />
       <Route path="/track" element={<TrackRequest />} />
+      <Route path="/privacy" element={<PrivacyPolicy />} />
+      <Route path="/terms" element={<TermsOfService />} />
       <Route path="/login" element={<Login />} />
       <Route path="/unauthorized" element={<Unauthorized />} />
 

@@ -147,8 +147,8 @@ export default function HelpRequestForm() {
             <CardHeader className="pb-8 pt-10 px-8">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
                 <div className="flex items-center gap-4">
-                  <div className="w-14 h-14 rounded-2xl bg-rose-500/10 flex items-center justify-center shadow-inner">
-                    <AlertTriangle className="w-8 h-8 text-rose-600" />
+                  <div className="w-14 h-14 rounded-2xl bg-white shadow-sm border border-slate-100 overflow-hidden flex items-center justify-center">
+                    <img src="/logo.png" alt="AidBridge Logo" className="w-10 h-10 object-contain" />
                   </div>
                   <div>
                     <CardTitle className="text-3xl font-black tracking-tight text-slate-900 leading-none mb-2 underline decoration-rose-500/20 underline-offset-4">Emergency Dispatch</CardTitle>
